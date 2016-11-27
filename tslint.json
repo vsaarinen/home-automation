@@ -1,0 +1,14 @@
+{
+  "extends": ["tslint:latest"],
+  "rules": {
+    "quotemark": [true, "single", "avoid-escape", "jsx-double"],
+    "no-var-requires": false,
+    "interface-name": [],
+    "object-literal-sort-keys": false,
+    "no-console": [],
+    "variable-name": [true, "allow-leading-underscore"],
+    "member-ordering": [false],
+    "object-literal-key-quotes": [false]
+  },
+  "rulesDirectory": []
+}

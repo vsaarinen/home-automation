@@ -1,0 +1,38 @@
+{
+  "name": "home-automation",
+  "version": "0.0.1",
+  "description": "A server that reads in sensor measurements and commands, and controls home utilities such as lights.",
+  "main": "src/index.ts",
+  "scripts": {
+    "start": "node dist/index.js",
+    "dist": "tsc",
+    "watch": "tsc -w",
+    "lint": "tslint --format=verbose '*.ts'",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vsaarinen/home-automation.git"
+  },
+  "keywords": [
+    "iot",
+    "home",
+    "automation",
+    "node"
+  ],
+  "author": "vsaarinen",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/vsaarinen/home-automation/issues"
+  },
+  "homepage": "https://github.com/vsaarinen/home-automation#readme",
+  "dependencies": {
+    "hapi": "^15.2.0",
+    "most": "^1.1.0",
+    "particle-api-js": "^6.4.0"
+  },
+  "devDependencies": {
+    "@types/hapi": "^13.0.37",
+    "typescript": "^2.0.10"
+  }
+}
