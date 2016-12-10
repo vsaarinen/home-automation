@@ -60,7 +60,7 @@ influx.getDatabaseNames()
     console.error(`Error creating Influx database!`, err);
   });
 
-const storeData = (valueType: string, value: number, tags: { [tag: string]: string }) => {
+const storeData = (valueType: string, value: number, tags: { [tag: string]: string }) =>
   influx.writeMeasurement(valueType, [
     {
       tags,
@@ -72,21 +72,17 @@ const storeData = (valueType: string, value: number, tags: { [tag: string]: stri
   })
   .catch(err => {
     console.error(`Error saving data to InfluxDB! ${err.stack}`);
+    throw new Error('Error saving data to InfluxDB!');
   });
-};
 
-export const storeTemperature = (temperature: number, location: string) => {
+export const storeTemperature = (temperature: number, location: string) =>
   storeData('temperature', temperature, { location });
-};
 
-export const storeHumidity = (humidity: number, location: string) => {
+export const storeHumidity = (humidity: number, location: string) =>
   storeData('humidity', humidity, { location });
-};
 
-export const storePressure = (pressure: number, location: string) => {
+export const storePressure = (pressure: number, location: string) =>
   storeData('pressure', pressure, { location });
-};
 
-export const storeLightLevel = (light: number, location: string) => {
+export const storeLightLevel = (light: number, location: string) =>
   storeData('light', light, { location });
-};

@@ -62,17 +62,21 @@ server.route({
 
     switch (type) {
       case 'temperature':
-        storeTemperature(parseFloat(value), location);
-        return reply('Ok!');
+        return reply(
+          storeTemperature(parseFloat(value), location).then(() => 'ok!'),
+        );
       case 'light':
-        storeLightLevel(parseInt(value, 10), location);
-        return reply('Ok!');
+        return reply(
+          storeLightLevel(parseInt(value, 10), location).then(() => 'ok!'),
+        );
       case 'pressure':
-        storePressure(parseFloat(value), location);
-        return reply('Ok!');
+        return reply(
+          storePressure(parseFloat(value), location).then(() => 'ok!'),
+        );
       case 'humidity':
-        storeHumidity(parseFloat(value), location);
-        return reply('Ok!');
+        return reply(
+          storeHumidity(parseFloat(value), location).then(() => 'ok!'),
+        );
       default:
         console.error(`Unknown sensor type ${type}`);
         return reply(new Error(`Unknown sensor type ${type}`));
