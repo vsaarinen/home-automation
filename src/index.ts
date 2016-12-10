@@ -4,7 +4,7 @@ import { disableLight, enableLight } from './remote';
 
 const server = new Hapi.Server();
 server.connection({
-  port: 8000,
+  port: process.env.PORT || 8080,
 });
 
 server.route({
