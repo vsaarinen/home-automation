@@ -42,6 +42,16 @@ const influx = new InfluxDB({
         'location',
       ],
     },
+    {
+      measurement: 'lightSwitch',
+      fields: {
+        enabled: FieldType.BOOLEAN,
+      },
+      tags: [
+        'group',
+        'manual',
+      ],
+    },
   ],
 });
 
@@ -60,7 +70,7 @@ influx.getDatabaseNames()
     console.error(`Error creating Influx database!`, err);
   });
 
-const storeData = (valueType: string, value: number, tags: { [tag: string]: string }) =>
+const storeMeasurementData = (valueType: string, value: number, tags: { [tag: string]: string }) =>
   influx.writeMeasurement(valueType, [
     {
       tags,
@@ -81,9 +91,24 @@ export const storageHandler = (type: string, value: string, location: string) =>
     case 'pressure':
     case 'humidity':
     case 'light':
-      return storeData(type, parseFloat(value), { location }).then(() => 'ok!');
+      return storeMeasurementData(type, parseFloat(value), { location }).then(() => 'ok!');
     default:
       console.error(`Unknown sensor type ${type}`);
       return Promise.reject(new Error(`Unknown sensor type ${type}`));
   }
 };
+
+export const storeLightSwitch = (group: string, enabled: boolean, manual = false) =>
+  influx.writeMeasurement('lightSwitch', [
+    {
+      tags: { group, manual: manual.toString() },
+      fields: { lightSwitch: enabled },
+    },
+  ])
+  .then(() => {
+    console.log(`Stored data to InfluxDB: [lightSwitch] ${enabled}, group ${group}, manual ${manual}`); // tslint:disable-line
+  })
+  .catch(err => {
+    console.error(`Error saving data to InfluxDB! ${err.stack}`);
+    throw new Error('Error saving data to InfluxDB!');
+  });
