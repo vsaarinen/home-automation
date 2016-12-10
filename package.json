@@ -4,9 +4,8 @@
   "description": "A server that reads in sensor measurements and commands, and controls home utilities such as lights.",
   "main": "src/index.ts",
   "scripts": {
-    "start": "node dist/index.js",
+    "start": "nodemon --watch 'src/**/*.ts' --ignore 'src/**/*.spec.ts' --exec 'ts-node' src/index.ts",
     "dist": "tsc",
-    "watch": "tsc -w",
     "lint": "tslint --format=verbose '*.ts'",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -33,6 +32,8 @@
   },
   "devDependencies": {
     "@types/hapi": "^13.0.37",
+    "nodemon": "^1.11.0",
+    "ts-node": "^1.7.2",
     "typescript": "^2.1.4"
   }
 }
