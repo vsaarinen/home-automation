@@ -37,8 +37,8 @@ interface FunctionCall {
 }
 
 const loginPromise = particle.login({
-  username: process.env['PARTICLE_EMAIL'],
-  password: process.env['PARTICLE_PASSWORD'],
+  username: process.env.PARTICLE_EMAIL,
+  password: process.env.PARTICLE_PASSWORD,
 }).then((data: ParticleResponse<Login>) => {
   console.log('Logged in to Particle successfully');
   accessToken = data.body.access_token;
@@ -55,14 +55,14 @@ const callParticleFunction = (command: string, group: string) => {
       throw new Error('Particle connection not initialized!');
     }
 
+    console.log(`Sending ${command} to group ${group}.`);
     particle.callFunction({
       deviceId,
       name: command,
       argument: group,
       auth: accessToken,
     }).then((data: ParticleResponse<FunctionCall>) => {
-      console.log(`Tried to ${command} group ${group}. ` +
-        `Connected: ${data.body.connected}, result: ${data.body.return_value}`);
+      console.log(`Connected: ${data.body.connected}, result: ${data.body.return_value}`);
     }).catch((err: any) => {
       console.log(`Unable to ${command} group ${group}:`, err);
     });
