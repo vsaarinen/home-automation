@@ -36,7 +36,7 @@ const influx = new InfluxDB({
     {
       measurement: 'light',
       fields: {
-        light: FieldType.INTEGER,
+        light: FieldType.FLOAT,
       },
       tags: [
         'location',
