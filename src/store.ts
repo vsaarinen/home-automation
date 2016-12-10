@@ -60,11 +60,12 @@ influx.getDatabaseNames()
     console.error(`Error creating Influx database!`, err);
   });
 
-const storeData = (valueType: string, value: number, metadata: { [tag: string]: string }) => {
+const storeData = (valueType: string, value: number, tags: { [tag: string]: string }) => {
+  console.log(value, 'tags', tags);
   influx.writePoints([
     {
       measurement: valueType,
-      tags: metadata,
+      tags,
       fields: { [valueType]: value },
     },
   ])
