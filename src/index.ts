@@ -1,18 +1,36 @@
 import * as Hapi from 'hapi';
+import * as Path from 'path';
 
 import { disableLight, enableLight } from './remote';
 
-const server = new Hapi.Server();
+const Inert = require('inert'); // tslint:disable-line
+
+const server = new Hapi.Server({
+  connections: {
+    routes: {
+      files: {
+        relativeTo: Path.join(__dirname, '..', 'public'),
+      },
+    },
+  },
+});
+
 server.connection({
   host: 'localhost',
   port: process.env.PORT || 8080,
 });
 
+server.register(Inert, () => {}); // tslint:disable-line
+
 server.route({
   method: 'GET',
-  path: '/',
-  handler: (_request, reply) => {
-    reply(`Hi there`);
+  path: '/{param*}',
+  handler: {
+    directory: {
+      path: '.',
+      redirectToSlash: true,
+      index: true,
+    },
   },
 });
 
