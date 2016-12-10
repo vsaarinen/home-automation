@@ -4,7 +4,7 @@
   "description": "A server that reads in sensor measurements and commands, and controls home utilities such as lights.",
   "main": "src/index.ts",
   "scripts": {
-    "start": "nodemon --watch 'src/**/*.ts' --ignore 'src/**/*.spec.ts' --exec 'ts-node' src/index.ts",
+    "start": "nodemon --watch 'src/**/*.ts' --ignore 'src/**/*.spec.ts' --ignore 'dist/' --exec 'ts-node' src/index.ts",
     "dist": "tsc",
     "lint": "tslint --format=verbose '*.ts'",
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -28,6 +28,7 @@
   "dependencies": {
     "hapi": "^16.0.1",
     "inert": "^4.0.3",
+    "influx": "^5.0.4",
     "most": "^1.1.1",
     "particle-api-js": "^6.4.0"
   },
