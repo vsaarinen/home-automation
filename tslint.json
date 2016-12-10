@@ -1,14 +1,16 @@
 {
   "extends": ["tslint:latest"],
   "rules": {
-    "quotemark": [true, "single", "avoid-escape", "jsx-double"],
-    "no-var-requires": false,
-    "interface-name": [],
-    "object-literal-sort-keys": false,
-    "no-console": [],
-    "variable-name": [true, "allow-leading-underscore"],
+    "arrow-parens": false,
+    "array-type": [true, "array"],
+    "interface-name": [false, "always-prefix"],
+    "max-classes-per-file": [false],
     "member-ordering": [false],
-    "object-literal-key-quotes": [false]
+    "no-var-requires": false,
+    "object-literal-key-quotes": [true, "as-needed"],
+    "object-literal-sort-keys": false,
+    "quotemark": [true, "single", "avoid-escape", "jsx-double"],
+    "variable-name": [true, "ban-keywords", "check-format", "allow-leading-underscore", "allow-pascal-case"]
   },
   "rulesDirectory": []
 }
