@@ -9,6 +9,14 @@ server.connection({
 
 server.route({
   method: 'GET',
+  path: '/',
+  handler: (_request, reply) => {
+    reply(`Hi there`);
+  },
+});
+
+server.route({
+  method: 'GET',
   path: '/groups/{groupId}/{command}',
   handler: (request, reply) => {
     const group = request.params['groupId']; // TODO: validate
@@ -23,7 +31,6 @@ server.route({
       console.error(`Unknown command ${command}`);
       return reply(`Unknown command ${command}`);
     }
-
   },
 });
 
