@@ -27,12 +27,12 @@
   },
   "homepage": "https://github.com/vsaarinen/home-automation#readme",
   "dependencies": {
-    "hapi": "^15.2.0",
-    "most": "^1.1.0",
+    "hapi": "^16.0.1",
+    "most": "^1.1.1",
     "particle-api-js": "^6.4.0"
   },
   "devDependencies": {
     "@types/hapi": "^13.0.37",
-    "typescript": "^2.0.10"
+    "typescript": "^2.1.4"
   }
 }
