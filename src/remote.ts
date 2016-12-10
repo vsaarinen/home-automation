@@ -50,7 +50,7 @@ const loginPromise = particle.login({
 });
 
 const callParticleFunction = (command: string, group: string) => {
-  Promise.all([loginPromise]).then(() => {
+  loginPromise.then(() => {
     if (!accessToken || !deviceId) {
       throw new Error('Particle connection not initialized!');
     }
