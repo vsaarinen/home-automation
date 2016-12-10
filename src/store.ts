@@ -62,15 +62,14 @@ influx.getDatabaseNames()
 
 const storeData = (valueType: string, value: number, tags: { [tag: string]: string }) => {
   console.log(value, 'tags', tags);
-  influx.writePoints([
+  influx.writeMeasurement(valueType, [
     {
-      measurement: valueType,
       tags,
       fields: { [valueType]: value },
     },
   ])
   .then(() => {
-    console.log(`Stored data to InfluxDB: [${valueType}] ${value} @ ${location}`); // tslint:disable-line
+    console.log(`Stored data to InfluxDB: [${valueType}] ${value} @ ${tags}`); // tslint:disable-line
   })
   .catch(err => {
     console.error(`Error saving data to InfluxDB! ${err.stack}`);
