@@ -75,14 +75,15 @@ const storeData = (valueType: string, value: number, tags: { [tag: string]: stri
     throw new Error('Error saving data to InfluxDB!');
   });
 
-export const storeTemperature = (temperature: number, location: string) =>
-  storeData('temperature', temperature, { location });
-
-export const storeHumidity = (humidity: number, location: string) =>
-  storeData('humidity', humidity, { location });
-
-export const storePressure = (pressure: number, location: string) =>
-  storeData('pressure', pressure, { location });
-
-export const storeLightLevel = (light: number, location: string) =>
-  storeData('light', light, { location });
+export const storageHandler = (type: string, value: string, location: string) => {
+  switch (type) {
+    case 'temperature':
+    case 'pressure':
+    case 'humidity':
+    case 'light':
+      return storeData(type, parseFloat(value), { location }).then(() => 'ok!');
+    default:
+      console.error(`Unknown sensor type ${type}`);
+      return Promise.reject(new Error(`Unknown sensor type ${type}`));
+  }
+};

@@ -40,13 +40,13 @@ const loginPromise = particle.login({
   username: process.env.PARTICLE_EMAIL,
   password: process.env.PARTICLE_PASSWORD,
 }).then((data: ParticleResponse<Login>) => {
-  console.log('Logged in to Particle successfully');
+  console.log('Logged in to Particle successfully'); // tslint:disable-line
   accessToken = data.body.access_token;
   return particle.listDevices({ auth: accessToken });
 }).then((devices: ParticleResponse<Device[]>) => {
   deviceId = devices.body[0].id;
 }).catch((err: any) => {
-  console.log('Particle initialization failed:', err);
+  console.error('Particle initialization failed:', err);
 });
 
 const callParticleFunction = (command: string, group: string) => {
@@ -55,16 +55,16 @@ const callParticleFunction = (command: string, group: string) => {
       throw new Error('Particle connection not initialized!');
     }
 
-    console.log(`Sending ${command} to group ${group}.`);
+    console.log(`Sending ${command} to group ${group}.`); // tslint:disable-line
     particle.callFunction({
       deviceId,
       name: command,
       argument: group,
       auth: accessToken,
     }).then((data: ParticleResponse<FunctionCall>) => {
-      console.log(`Connected: ${data.body.connected}, result: ${data.body.return_value}`);
+      console.log(`Connected: ${data.body.connected}, result: ${data.body.return_value}`); // tslint:disable-line
     }).catch((err: any) => {
-      console.log(`Unable to ${command} group ${group}:`, err);
+      console.error(`Unable to ${command} group ${group}:`, err);
     });
   });
 };
@@ -75,4 +75,18 @@ export const enableLight = (group: string) => {
 
 export const disableLight = (group: string) => {
   callParticleFunction('turnOff', group);
+};
+
+export const lightControlHandler = (group: string, command: string) => {
+  // TODO: validate group
+  if (command === 'enable') {
+    enableLight(group);
+    return `turning on group ${group}`;
+  } else if (command === 'disable') {
+    disableLight(group);
+    return `turning off group ${group}`;
+  } else {
+    console.error(`Unknown command ${command}`);
+    return new Error(`Unknown command ${command}`);
+  }
 };
