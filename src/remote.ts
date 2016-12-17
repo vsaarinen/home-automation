@@ -1,3 +1,5 @@
+import { storeAction } from './permanent-store';
+
 const Particle = require('particle-api-js'); // tslint:disable-line
 
 const particle = new Particle();
@@ -36,6 +38,15 @@ interface FunctionCall {
   return_value: number;
 }
 
+export enum AutomationActionCommand {
+  ENABLE_LIGHT,
+  DISABLE_LIGHT,
+};
+export interface AutomationAction {
+  command: AutomationActionCommand;
+  target: string;
+}
+
 const loginPromise = particle.login({
   username: process.env.PARTICLE_EMAIL,
   password: process.env.PARTICLE_PASSWORD,
@@ -68,17 +79,22 @@ const callParticleFunction = (command: string, group: string): Promise<void> =>
     });
   });
 
-export const enableLight = (group: string) => callParticleFunction('turnOn', group);
-export const disableLight = (group: string) => callParticleFunction('turnOff', group);
+const enableLight = (group: string) => callParticleFunction('turnOn', group);
+const disableLight = (group: string) => callParticleFunction('turnOff', group);
 
-export const lightControlHandler = (group: string, command: string) => {
-  // TODO: validate group
-  if (command === 'enable') {
-    return enableLight(group).then(() => `turning on group ${group}`);
-  } else if (command === 'disable') {
-    return disableLight(group).then(() => `turning off group ${group}`);
-  } else {
-    console.error(`Unknown command ${command}`);
-    return Promise.reject(new Error(`Unknown command ${command}`));
+// Takes the desired actions and stores the actions to the permanent storage
+export const takeActions = (actions: AutomationAction[]) => {
+  return Promise.all(actions.map(action => handleAction(action)));
+};
+const handleAction = (action: AutomationAction) => {
+  switch (action.command) {
+    case AutomationActionCommand.ENABLE_LIGHT:
+      return enableLight(action.target)
+        .then(() => storeAction(action));
+    case AutomationActionCommand.DISABLE_LIGHT:
+      return disableLight(action.target)
+        .then(() => storeAction(action));
+    default:
+      throw new Error(`Unknown command ${action.command}`);
   }
 };

@@ -1,5 +1,7 @@
 import { FieldType, InfluxDB } from 'influx';
 
+import { AutomationAction, AutomationActionCommand } from './remote';
+
 const DB_NAME = 'koti';
 
 const influx = new InfluxDB({
@@ -85,30 +87,45 @@ const storeMeasurementData = (valueType: string, value: number, tags: { [tag: st
     throw new Error('Error saving data to InfluxDB!');
   });
 
-export const storageHandler = (type: string, value: string, location: string) => {
+export const permanentStorageHandler = (type: string, value: string, location: string) => {
   switch (type) {
     case 'temperature':
     case 'pressure':
     case 'humidity':
     case 'light':
-      return storeMeasurementData(type, parseFloat(value), { location }).then(() => 'ok!');
+      return storeMeasurementData(type, parseFloat(value), { location });
     default:
       console.error(`Unknown sensor type ${type}`);
-      return Promise.reject(new Error(`Unknown sensor type ${type}`));
+      throw new Error(`Unknown sensor type ${type}`);
   }
 };
 
-export const storeLightSwitch = (group: string, enabled: boolean, manual = false) =>
-  influx.writeMeasurement('lightSwitch', [
-    {
-      tags: { group, manual: manual.toString() },
-      fields: { lightSwitch: enabled },
-    },
-  ])
-  .then(() => {
-    console.log(`Stored data to InfluxDB: [lightSwitch] ${enabled}, group ${group}, manual ${manual}`); // tslint:disable-line
-  })
-  .catch(err => {
+export const storeAction = (action: AutomationAction) => {
+  let storagePromise: Promise<void>;
+  let manual = false;
+
+  switch (action.command) {
+    case AutomationActionCommand.ENABLE_LIGHT:
+    case AutomationActionCommand.DISABLE_LIGHT:
+      const group = action.target;
+      const enabled = action.command === AutomationActionCommand.ENABLE_LIGHT;
+
+      storagePromise = influx.writeMeasurement('lightSwitch', [
+        {
+          tags: { group, manual: manual.toString() },
+          fields: { lightSwitch: enabled },
+        },
+      ])
+      .then(() => {
+        console.log(`Stored data to InfluxDB: [lightSwitch] ${enabled}, group ${group}, manual ${manual}`); // tslint:disable-line
+      });
+      break;
+    default:
+      throw new Error(`Unable to store unknown action type: ${action.command}`);
+  }
+
+  return storagePromise.catch(err => {
     console.error(`Error saving data to InfluxDB! ${err.stack}`);
     throw new Error('Error saving data to InfluxDB!');
   });
+};

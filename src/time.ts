@@ -2,6 +2,8 @@
 
 import { periodic } from 'most';
 
-export const minuteS = periodic(1000 * 60).map(() => new Date());
+const now = () => new Date();
+
+export const minuteS = periodic(1000 * 60).map(now);
 export const hourS = minuteS.filter(d => d.getMinutes() === 0);
 export const dayS = hourS.filter(d => d.getHours() === 0);

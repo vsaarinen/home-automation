@@ -30,7 +30,8 @@
     "inert": "^4.0.3",
     "influx": "^5.0.4",
     "most": "^1.1.1",
-    "particle-api-js": "^6.4.0"
+    "particle-api-js": "^6.4.1",
+    "redux": "^3.6.0"
   },
   "devDependencies": {
     "@types/hapi": "^13.0.37",

@@ -1,7 +1,7 @@
 import * as Hapi from 'hapi';
 
-import { lightControlHandler } from './remote';
-import { storageHandler } from './store';
+import { permanentStorageHandler } from './permanent-store';
+import { AutomationAction, AutomationActionCommand, takeActions } from './remote';
 
 const Inert = require('inert'); // tslint:disable-line
 
@@ -25,9 +25,25 @@ export const initializeRoutes = (server: Hapi.Server) => {
     method: 'GET',
     path: '/groups/{group}/{command}',
     handler: (request, reply) => {
-      const { group, command } = request.params; // TODO: validate
+      const { group, command } = request.params;
+      let action: AutomationAction;
 
-      return reply(lightControlHandler(group, command));
+      switch (command) {
+        case 'enable':
+          action = { command: AutomationActionCommand.ENABLE_LIGHT, target: group };
+          break;
+        case 'disable':
+          action = { command: AutomationActionCommand.DISABLE_LIGHT, target: group };
+          break;
+        default:
+          return reply(new Error(`Unknown command ${command}!`));
+      }
+
+      return reply(
+        takeActions([action])
+          .then(() => `Command ${command} sent to group ${group}`)
+          .catch((e: any) => Promise.reject(new Error(`Unable to ${command} group ${group}: ${JSON.stringify(e)}`))),
+      );
     },
   });
 
@@ -37,7 +53,11 @@ export const initializeRoutes = (server: Hapi.Server) => {
     handler: (request, reply) => {
       const { type, value, location } = request.payload; // TODO: validate
 
-      return reply(storageHandler(type, value, location));
+      return reply(
+        permanentStorageHandler(type, value, location)
+          .then(() => 'ok!')
+          .catch((_e: any) => Promise.reject(new Error(`Unable to store ${type} measurement group ${value}`))),
+      );
     },
   });
 };
