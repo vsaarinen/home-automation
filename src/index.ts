@@ -8,24 +8,6 @@ import { AutomationAction, AutomationActionCommand, takeActions } from './remote
 import { initializeRoutes } from './routes';
 import { hourS } from './time';
 
-// SET UP SERVER
-const server = new Hapi.Server({
-  connections: {
-    routes: {
-      files: {
-        relativeTo: Path.join(__dirname, '..', 'public'),
-      },
-    },
-  },
-});
-
-server.connection({
-  host: 'localhost',
-  port: process.env.PORT || 8080,
-});
-
-initializeRoutes(server);
-
 // SET UP STORE
 const store = createStore<State>(reducer);
 
@@ -62,6 +44,24 @@ const handleActionsToTake = (actionsToTake: AutomationAction[]) => {
 
 // Returns an unsubscribe function if needed
 observeStore(store, (s: State) => s.actionsToTake, handleActionsToTake);
+
+// SET UP SERVER
+const server = new Hapi.Server({
+  connections: {
+    routes: {
+      files: {
+        relativeTo: Path.join(__dirname, '..', 'public'),
+      },
+    },
+  },
+});
+
+server.connection({
+  host: 'localhost',
+  port: process.env.PORT || 8080,
+});
+
+initializeRoutes(server, store);
 
 // SET UP TIME-BASED ACTIONS
 // Automatically turn off outer lights

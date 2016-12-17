@@ -1,11 +1,21 @@
 import * as Hapi from 'hapi';
+import { Store } from 'redux';
 
-import { permanentStorageHandler } from './permanent-store';
+import {
+  removePersonPresent,
+  setHumidity,
+  setLightLevel,
+  setPersonPresent,
+  setPressure,
+  setTemperature,
+} from './actions';
+import { permanentStorageHandler, storeLocationChange } from './permanent-store';
+import { State } from './reducer';
 import { AutomationAction, AutomationActionCommand, takeActions } from './remote';
 
 const Inert = require('inert'); // tslint:disable-line
 
-export const initializeRoutes = (server: Hapi.Server) => {
+export const initializeRoutes = (server: Hapi.Server, store: Store<State>) => {
   // Adds the directory handler
   server.register(Inert, () => {}); // tslint:disable-line
 
@@ -53,10 +63,50 @@ export const initializeRoutes = (server: Hapi.Server) => {
     handler: (request, reply) => {
       const { type, value, location } = request.payload; // TODO: validate
 
+      // TODO: also store location in Redux state
+      switch (type) {
+        case 'temperature':
+          store.dispatch(setTemperature(value));
+          break;
+        case 'pressure':
+          store.dispatch(setPressure(value));
+          break;
+        case 'humidity':
+          store.dispatch(setHumidity(value));
+          break;
+        case 'light':
+          store.dispatch(setLightLevel(value));
+          break;
+        default:
+          return reply(new Error(`Unknown measurement type ${type}!`));
+      }
+
       return reply(
         permanentStorageHandler(type, value, location)
           .then(() => 'ok!')
-          .catch((_e: any) => Promise.reject(new Error(`Unable to store ${type} measurement group ${value}`))),
+          .catch((_e: any) => { throw new Error(`Unable to store ${type} measurement group ${value} into database`); }),
+      );
+    },
+  });
+
+  server.route({
+    method: 'POST',
+    path: '/location',
+    handler: (request, reply) => {
+      const { action, person } = request.payload; // TODO: validate
+
+      if (action === 'arriving') {
+        store.dispatch(setPersonPresent(person));
+      } else if (action === 'leaving') {
+        store.dispatch(removePersonPresent(person));
+      } else {
+        return reply(new Error(`Unknown action ${action}!`));
+      }
+
+      return reply(
+        storeLocationChange(person, action === 'arriving')
+          .then(() => 'ok!')
+          .catch((_e: any) => { throw new Error(`Unable to store ${action} for ${person} into database`); }),
       );
     },
   });

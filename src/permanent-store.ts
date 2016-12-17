@@ -54,6 +54,15 @@ const influx = new InfluxDB({
         'manual',
       ],
     },
+    {
+      measurement: 'personLocation',
+      fields: {
+        isHome: FieldType.BOOLEAN,
+      },
+      tags: [
+        'person',
+      ],
+    },
   ],
 });
 
@@ -125,7 +134,22 @@ export const storeAction = (action: AutomationAction) => {
   }
 
   return storagePromise.catch(err => {
-    console.error(`Error saving data to InfluxDB! ${err.stack}`);
-    throw new Error('Error saving data to InfluxDB!');
+    console.error(`Error saving action data to InfluxDB! ${err.stack}`);
+    throw new Error('Error saving action data to InfluxDB!');
   });
 };
+
+export const storeLocationChange = (person: string, isHome: boolean) =>
+  influx.writeMeasurement('personLocation', [
+    {
+      tags: { person },
+      fields: { isHome },
+    },
+  ])
+  .then(() => {
+    console.log(`Stored data to InfluxDB: [personLocation] ${person}, isHome ${isHome}`); // tslint:disable-line
+  })
+  .catch(err => {
+    console.error(`Error saving location data to InfluxDB! ${err.stack}`);
+    throw new Error('Error saving location data to InfluxDB!');
+  });
