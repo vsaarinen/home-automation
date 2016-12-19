@@ -53,13 +53,13 @@ const loginPromise = particle.login({
   username: process.env.PARTICLE_EMAIL,
   password: process.env.PARTICLE_PASSWORD,
 }).then((data: ParticleResponse<Login>) => {
-  log('Logged in to Particle successfully');
+  log('[particle] Logged in to Particle successfully');
   accessToken = data.body.access_token;
   return particle.listDevices({ auth: accessToken });
 }).then((devices: ParticleResponse<Device[]>) => {
   deviceId = devices.body[0].id;
 }).catch((err: any) => {
-  error('Particle initialization failed:', err);
+  error('[particle] Particle initialization failed:', err);
 });
 
 const callParticleFunction = (command: string, group: string): Promise<void> =>
@@ -68,25 +68,36 @@ const callParticleFunction = (command: string, group: string): Promise<void> =>
       throw new Error('Particle connection not initialized!');
     }
 
-    log(`Sending ${command} to group ${group}.`);
+    log(`[particle] Sending ${command} to group ${group}.`);
     particle.callFunction({
       deviceId,
       name: command,
       argument: group,
       auth: accessToken,
     }).then((data: ParticleResponse<FunctionCall>) => {
-      log(`Result for ${command} @ ${group}: ${data.body.return_value}`);
+      log(`[particle] Result for ${command} @ ${group}: ${data.body.return_value}`);
     }).catch((err: any) => {
-      error(`Unable to ${command} group ${group}:`, err);
+      error(`[particle] Unable to ${command} group ${group}:`, err);
     });
   });
 
-const enableLight = (group: string) => callParticleFunction('turnOn', group);
-const disableLight = (group: string) => callParticleFunction('turnOff', group);
+// We need to wait for at least 2 seconds when enabling/disabling lights
+// because that's how long the button press is simulated for on the remote.
+const enableLight = (group: string) =>
+  new Promise((resolve, _reject) => {
+    callParticleFunction('turnOn', group)
+      .then(() => { setTimeout(() => resolve(), 2500); });
+  });
+
+const disableLight = (group: string) =>
+  new Promise((resolve, _reject) => {
+    callParticleFunction('turnOff', group)
+      .then(() => { setTimeout(() => resolve(), 2500); });
+  });
 
 // Takes the desired actions sequentially and stores them to the permanent storage
 export const takeActions = (actions: AutomationAction[]) => {
-  let p = Promise.resolve();
+  let p: Promise<{} | void> = Promise.resolve();
   actions.forEach(action => {
     p = p.then(() => handleAction(action));
   });
