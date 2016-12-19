@@ -84,9 +84,14 @@ const callParticleFunction = (command: string, group: string): Promise<void> =>
 const enableLight = (group: string) => callParticleFunction('turnOn', group);
 const disableLight = (group: string) => callParticleFunction('turnOff', group);
 
-// Takes the desired actions and stores the actions to the permanent storage
-export const takeActions = (actions: AutomationAction[]) =>
-  Promise.all(actions.map(action => handleAction(action)));
+// Takes the desired actions sequentially and stores them to the permanent storage
+export const takeActions = (actions: AutomationAction[]) => {
+  let p = Promise.resolve();
+  actions.forEach(action => {
+    p = p.then(() => handleAction(action));
+  });
+  return p;
+};
 
 const handleAction = (action: AutomationAction) => {
   log(`[action] Handling action ${action.command} on ${action.target}`);
