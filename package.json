@@ -31,7 +31,8 @@
     "influx": "^5.0.4",
     "most": "^1.1.1",
     "particle-api-js": "^6.4.1",
-    "redux": "^3.6.0"
+    "redux": "^3.6.0",
+    "suncalc": "^1.7.0"
   },
   "devDependencies": {
     "@types/hapi": "^13.0.37",

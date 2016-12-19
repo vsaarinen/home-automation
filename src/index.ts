@@ -6,7 +6,7 @@ import { clearActionsToTake } from './actions';
 import reducer, { State } from './reducer';
 import { AutomationAction, AutomationActionCommand, takeActions } from './remote';
 import { initializeRoutes } from './routes';
-import { hourS } from './time';
+import { dawnS, duskS } from './time';
 
 // SET UP STORE
 const store = createStore<State>(reducer);
@@ -65,30 +65,26 @@ initializeRoutes(server, store);
 
 // SET UP TIME-BASED ACTIONS
 // Automatically turn off outer lights
-hourS
-  .filter(d => d.getHours() === 9)
-  .forEach(() => {
-    const externalLightGroup = '3';
-    const action: AutomationAction = {
-      command: AutomationActionCommand.DISABLE_LIGHT,
-      target: externalLightGroup,
-    };
-    takeActions([action])
-      .catch(() => { console.error('Unable to disable external light'); });
-  });
+dawnS.forEach(() => {
+  const externalLightGroup = '3';
+  const action: AutomationAction = {
+    command: AutomationActionCommand.DISABLE_LIGHT,
+    target: externalLightGroup,
+  };
+  takeActions([action])
+    .catch(() => { console.error('Unable to disable external light'); });
+});
 
 // Automatically turn on outer lights
-hourS
-  .filter(d => d.getHours() === 17)
-  .forEach(() => {
-    const externalLightGroup = '3';
-    const action: AutomationAction = {
-      command: AutomationActionCommand.ENABLE_LIGHT,
-      target: externalLightGroup,
-    };
-    takeActions([action])
-      .catch(() => { console.error('Unable to enable external light'); });
-  });
+duskS.forEach(() => {
+  const externalLightGroup = '3';
+  const action: AutomationAction = {
+    command: AutomationActionCommand.ENABLE_LIGHT,
+    target: externalLightGroup,
+  };
+  takeActions([action])
+    .catch(() => { console.error('Unable to enable external light'); });
+});
 
 // START SERVER
 server.start((err) => {
