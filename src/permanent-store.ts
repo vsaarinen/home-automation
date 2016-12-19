@@ -46,7 +46,7 @@ const influx = new InfluxDB({
       ],
     },
     {
-      measurement: 'lightSwitch',
+      measurement: 'switchedLight',
       fields: {
         enabled: FieldType.BOOLEAN,
       },
@@ -111,7 +111,6 @@ export const permanentStorageHandler = (type: string, value: string, location: s
 };
 
 export const storeAction = (action: AutomationAction) => {
-  let storagePromise: Promise<void>;
   let manual = false;
 
   switch (action.command) {
@@ -120,24 +119,22 @@ export const storeAction = (action: AutomationAction) => {
       const group = action.target;
       const enabled = action.command === AutomationActionCommand.ENABLE_LIGHT;
 
-      storagePromise = influx.writeMeasurement('lightSwitch', [
+      return influx.writeMeasurement('switchedLight', [
         {
           tags: { group, manual: manual.toString() },
-          fields: { lightSwitch: enabled },
+          fields: { enabled },
         },
       ])
       .then(() => {
-        log(`Stored data to InfluxDB: [lightSwitch] ${enabled}, group ${group}, manual ${manual}`);
+        log(`Stored data to InfluxDB: [switchedLight] ${enabled}, group ${group}, manual ${manual}`);
+      })
+      .catch(err => {
+        error(`Error saving action data to InfluxDB! ${err.stack}`);
+        throw new Error('Error saving action data to InfluxDB!');
       });
-      break;
     default:
       throw new Error(`Unable to store unknown action type: ${action.command}`);
   }
-
-  return storagePromise.catch(err => {
-    error(`Error saving action data to InfluxDB! ${err.stack}`);
-    throw new Error('Error saving action data to InfluxDB!');
-  });
 };
 
 export const storeLocationChange = (person: string, isHome: boolean) =>
