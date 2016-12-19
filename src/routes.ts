@@ -90,10 +90,10 @@ export const initializeRoutes = (server: Hapi.Server, store: Store<State>) => {
   });
 
   server.route({
-    method: 'POST',
-    path: '/location',
+    method: 'GET',
+    path: '/location/{person}/{action}',
     handler: (request, reply) => {
-      const { action, person } = request.payload; // TODO: validate
+      const { action, person } = request.params; // TODO: validate
 
       if (action === 'arriving') {
         store.dispatch(setPersonPresent(person));
@@ -106,7 +106,9 @@ export const initializeRoutes = (server: Hapi.Server, store: Store<State>) => {
       return reply(
         storeLocationChange(person, action === 'arriving')
           .then(() => 'ok!')
-          .catch((_e: any) => { throw new Error(`Unable to store ${action} for ${person} into database`); }),
+          .catch((_e: any) => {
+            throw new Error(`Unable to store ${action} for ${person} into database`);
+          }),
       );
     },
   });

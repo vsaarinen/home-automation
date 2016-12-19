@@ -88,6 +88,7 @@ export const takeActions = (actions: AutomationAction[]) => {
   return Promise.all(actions.map(action => handleAction(action)));
 };
 const handleAction = (action: AutomationAction) => {
+  log(`[action] Handling action ${action.command} on ${action.target}`);
   switch (action.command) {
     case AutomationActionCommand.ENABLE_LIGHT:
       return enableLight(action.target)

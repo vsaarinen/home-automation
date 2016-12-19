@@ -32,6 +32,8 @@ const initialState: State = {
 
 const MINIMUM_LIGHT_LEVEL = 50;
 
+// TODO: Handle the case when the light has been enabled manually
+
 const reducer = (state = initialState, action: Action): State => {
   let { actionsToTake, lightSetAutomatically } = state;
 
