@@ -40,10 +40,10 @@ export const initializeRoutes = (server: Hapi.Server, store: Store<State>) => {
 
       switch (command) {
         case 'enable':
-          action = { command: AutomationActionCommand.ENABLE_LIGHT, target: group };
+          action = { command: AutomationActionCommand.ENABLE_LIGHT, target: group, manual: true };
           break;
         case 'disable':
-          action = { command: AutomationActionCommand.DISABLE_LIGHT, target: group };
+          action = { command: AutomationActionCommand.DISABLE_LIGHT, target: group, manual: true };
           break;
         default:
           return reply(new Error(`Unknown command ${command}!`));
