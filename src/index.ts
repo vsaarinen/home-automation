@@ -2,6 +2,9 @@ import * as Hapi from 'hapi';
 import * as Path from 'path';
 import { createStore, Store, Unsubscribe } from 'redux';
 
+const { AsyncNodeStorage } = require('redux-persist-node-storage');
+const { persistStore, autoRehydrate } = require('redux-persist');
+
 import { clearActionsToTake } from './actions';
 import { error, log } from './log';
 import reducer, { State } from './reducer';
@@ -10,7 +13,8 @@ import { initializeRoutes } from './routes';
 import { dawnS, duskS } from './time';
 
 // SET UP STORE
-const store = createStore<State>(reducer);
+const store = createStore<State>(reducer, undefined as any, autoRehydrate());
+persistStore(store, { storage: new AsyncNodeStorage('/tmp/storageDir') });
 
 // Based on https://github.com/reactjs/redux/issues/303#issuecomment-125184409
 const observeStore = <T>(

@@ -32,6 +32,8 @@
     "most": "^1.1.1",
     "particle-api-js": "^6.4.1",
     "redux": "^3.6.0",
+    "redux-persist": "^4.0.0",
+    "redux-persist-node-storage": "^1.0.2",
     "suncalc": "^1.7.0"
   },
   "devDependencies": {
