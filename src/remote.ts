@@ -40,8 +40,8 @@ interface FunctionCall {
 }
 
 export enum AutomationActionCommand {
-  ENABLE_LIGHT,
   DISABLE_LIGHT,
+  ENABLE_LIGHT,
 };
 export interface AutomationAction {
   command: AutomationActionCommand;
@@ -74,7 +74,7 @@ const callParticleFunction = (command: string, group: string): Promise<void> =>
       argument: group,
       auth: accessToken,
     }).then((data: ParticleResponse<FunctionCall>) => {
-      log(`Connected: ${data.body.connected}, result: ${data.body.return_value}`);
+      log(`Result for ${command} @ ${group}: ${data.body.return_value}`);
     }).catch((err: any) => {
       error(`Unable to ${command} group ${group}:`, err);
     });
@@ -84,9 +84,9 @@ const enableLight = (group: string) => callParticleFunction('turnOn', group);
 const disableLight = (group: string) => callParticleFunction('turnOff', group);
 
 // Takes the desired actions and stores the actions to the permanent storage
-export const takeActions = (actions: AutomationAction[]) => {
-  return Promise.all(actions.map(action => handleAction(action)));
-};
+export const takeActions = (actions: AutomationAction[]) =>
+  Promise.all(actions.map(action => handleAction(action)));
+
 const handleAction = (action: AutomationAction) => {
   log(`[action] Handling action ${action.command} on ${action.target}`);
   switch (action.command) {
