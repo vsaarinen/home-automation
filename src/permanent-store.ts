@@ -76,10 +76,10 @@ influx.getDatabaseNames()
     return;
   })
   .then(() => {
-    log('Connected to InfluxDB');
+    log('[influxdb] Connected to InfluxDB');
   })
   .catch(err => {
-    error(`Error creating Influx database!`, err);
+    error('[influxdb] Error creating Influx database!', err);
   });
 
 const storeMeasurementData = (valueType: string, value: number, tags: { [tag: string]: string }) =>
@@ -90,10 +90,10 @@ const storeMeasurementData = (valueType: string, value: number, tags: { [tag: st
     },
   ])
   .then(() => {
-    log(`Stored data to InfluxDB: [${valueType}] ${value} @ ${tags['location']}`);
+    log(`[influxdb] Stored data to InfluxDB: [${valueType}] ${value} @ ${tags['location']}`);
   })
   .catch(err => {
-    error(`Error saving data to InfluxDB! ${err.stack}`);
+    error(`[influxdb] Error saving data to InfluxDB! ${err.stack}`);
     throw new Error('Error saving data to InfluxDB!');
   });
 
@@ -105,7 +105,7 @@ export const permanentStorageHandler = (type: string, value: string, location: s
     case 'light':
       return storeMeasurementData(type, parseFloat(value), { location });
     default:
-      error(`Unknown sensor type ${type}`);
+      error(`[influxdb] Unknown sensor type ${type}`);
       throw new Error(`Unknown sensor type ${type}`);
   }
 };
@@ -126,10 +126,10 @@ export const storeAction = (action: AutomationAction) => {
         },
       ])
       .then(() => {
-        log(`Stored data to InfluxDB: [switchedLight] ${enabled}, group ${group}, manual ${manual}`);
+        log(`[influxdb] Stored data to InfluxDB: [switchedLight] ${enabled}, group ${group}, manual ${manual}`);
       })
       .catch(err => {
-        error(`Error saving action data to InfluxDB! ${err.stack}`);
+        error(`[influxdb] Error saving action data to InfluxDB! ${err.stack}`);
         throw new Error('Error saving action data to InfluxDB!');
       });
     default:
@@ -145,9 +145,9 @@ export const storeLocationChange = (person: string, isHome: boolean) =>
     },
   ])
   .then(() => {
-    log(`Stored data to InfluxDB: [personLocation] ${person}, isHome ${isHome}`);
+    log(`[influxdb] Stored data to InfluxDB: [personLocation] ${person}, isHome ${isHome}`);
   })
   .catch(err => {
-    error(`Error saving location data to InfluxDB! ${err.stack}`);
+    error(`[influxdb] Error saving location data to InfluxDB! ${err.stack}`);
     throw new Error('Error saving location data to InfluxDB!');
   });
