@@ -111,7 +111,7 @@ export const permanentStorageHandler = (type: string, value: string, location: s
 };
 
 export const storeAction = (action: AutomationAction) => {
-  let manual = false;
+  const manual = !!action.manual;
 
   switch (action.command) {
     case AutomationActionCommand.ENABLE_LIGHT:

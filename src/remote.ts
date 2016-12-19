@@ -46,6 +46,7 @@ export enum AutomationActionCommand {
 export interface AutomationAction {
   command: AutomationActionCommand;
   target: string;
+  manual?: boolean;
 }
 
 const loginPromise = particle.login({
