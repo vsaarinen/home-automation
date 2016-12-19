@@ -3,6 +3,7 @@ import * as Path from 'path';
 import { createStore, Store, Unsubscribe } from 'redux';
 
 import { clearActionsToTake } from './actions';
+import { error, log } from './log';
 import reducer, { State } from './reducer';
 import { AutomationAction, AutomationActionCommand, takeActions } from './remote';
 import { initializeRoutes } from './routes';
@@ -37,8 +38,8 @@ const handleActionsToTake = (actionsToTake: AutomationAction[]) => {
     const actions = [...actionsToTake];
     store.dispatch(clearActionsToTake());
     takeActions(actions)
-      .then(() => { console.log(`Successfully took ${actions.length} actions`); }) // tslint:disable-line
-      .catch((e: any) => { console.error(`Taking actions failed: ${JSON.stringify(e)}`); });
+      .then(() => { log(`Successfully took ${actions.length} actions`); })
+      .catch((e: any) => { error(`Taking actions failed: ${JSON.stringify(e)}`); });
   }
 };
 
@@ -72,7 +73,7 @@ dawnS.forEach(() => {
     target: externalLightGroup,
   };
   takeActions([action])
-    .catch(() => { console.error('Unable to disable external light'); });
+    .catch(() => { error('Unable to disable external light'); });
 });
 
 // Automatically turn on outer lights
@@ -83,11 +84,11 @@ duskS.forEach(() => {
     target: externalLightGroup,
   };
   takeActions([action])
-    .catch(() => { console.error('Unable to enable external light'); });
+    .catch(() => { error('Unable to enable external light'); });
 });
 
 // START SERVER
 server.start((err) => {
   if (err) { throw err; }
-  console.log('Server running at:', server.info.uri); // tslint:disable-line:no-console
+  log('Server running at:', server.info.uri);
 });

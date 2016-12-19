@@ -1,5 +1,6 @@
 import { FieldType, InfluxDB } from 'influx';
 
+import { error, log } from './log';
 import { AutomationAction, AutomationActionCommand } from './remote';
 
 const DB_NAME = 'koti';
@@ -75,10 +76,10 @@ influx.getDatabaseNames()
     return;
   })
   .then(() => {
-    console.log('Connected to InfluxDB'); // tslint:disable-line:no-console
+    log('Connected to InfluxDB');
   })
   .catch(err => {
-    console.error(`Error creating Influx database!`, err);
+    error(`Error creating Influx database!`, err);
   });
 
 const storeMeasurementData = (valueType: string, value: number, tags: { [tag: string]: string }) =>
@@ -89,10 +90,10 @@ const storeMeasurementData = (valueType: string, value: number, tags: { [tag: st
     },
   ])
   .then(() => {
-    console.log(`Stored data to InfluxDB: [${valueType}] ${value} @ ${tags['location']}`); // tslint:disable-line
+    log(`Stored data to InfluxDB: [${valueType}] ${value} @ ${tags['location']}`);
   })
   .catch(err => {
-    console.error(`Error saving data to InfluxDB! ${err.stack}`);
+    error(`Error saving data to InfluxDB! ${err.stack}`);
     throw new Error('Error saving data to InfluxDB!');
   });
 
@@ -104,7 +105,7 @@ export const permanentStorageHandler = (type: string, value: string, location: s
     case 'light':
       return storeMeasurementData(type, parseFloat(value), { location });
     default:
-      console.error(`Unknown sensor type ${type}`);
+      error(`Unknown sensor type ${type}`);
       throw new Error(`Unknown sensor type ${type}`);
   }
 };
@@ -126,7 +127,7 @@ export const storeAction = (action: AutomationAction) => {
         },
       ])
       .then(() => {
-        console.log(`Stored data to InfluxDB: [lightSwitch] ${enabled}, group ${group}, manual ${manual}`); // tslint:disable-line
+        log(`Stored data to InfluxDB: [lightSwitch] ${enabled}, group ${group}, manual ${manual}`);
       });
       break;
     default:
@@ -134,7 +135,7 @@ export const storeAction = (action: AutomationAction) => {
   }
 
   return storagePromise.catch(err => {
-    console.error(`Error saving action data to InfluxDB! ${err.stack}`);
+    error(`Error saving action data to InfluxDB! ${err.stack}`);
     throw new Error('Error saving action data to InfluxDB!');
   });
 };
@@ -147,9 +148,9 @@ export const storeLocationChange = (person: string, isHome: boolean) =>
     },
   ])
   .then(() => {
-    console.log(`Stored data to InfluxDB: [personLocation] ${person}, isHome ${isHome}`); // tslint:disable-line
+    log(`Stored data to InfluxDB: [personLocation] ${person}, isHome ${isHome}`);
   })
   .catch(err => {
-    console.error(`Error saving location data to InfluxDB! ${err.stack}`);
+    error(`Error saving location data to InfluxDB! ${err.stack}`);
     throw new Error('Error saving location data to InfluxDB!');
   });

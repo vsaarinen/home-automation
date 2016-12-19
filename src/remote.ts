@@ -1,6 +1,7 @@
+import { error, log } from './log';
 import { storeAction } from './permanent-store';
 
-const Particle = require('particle-api-js'); // tslint:disable-line
+const Particle = require('particle-api-js');
 
 const particle = new Particle();
 let accessToken: string;
@@ -51,13 +52,13 @@ const loginPromise = particle.login({
   username: process.env.PARTICLE_EMAIL,
   password: process.env.PARTICLE_PASSWORD,
 }).then((data: ParticleResponse<Login>) => {
-  console.log('Logged in to Particle successfully'); // tslint:disable-line
+  log('Logged in to Particle successfully');
   accessToken = data.body.access_token;
   return particle.listDevices({ auth: accessToken });
 }).then((devices: ParticleResponse<Device[]>) => {
   deviceId = devices.body[0].id;
 }).catch((err: any) => {
-  console.error('Particle initialization failed:', err);
+  error('Particle initialization failed:', err);
 });
 
 const callParticleFunction = (command: string, group: string): Promise<void> =>
@@ -66,16 +67,16 @@ const callParticleFunction = (command: string, group: string): Promise<void> =>
       throw new Error('Particle connection not initialized!');
     }
 
-    console.log(`Sending ${command} to group ${group}.`); // tslint:disable-line
+    log(`Sending ${command} to group ${group}.`);
     particle.callFunction({
       deviceId,
       name: command,
       argument: group,
       auth: accessToken,
     }).then((data: ParticleResponse<FunctionCall>) => {
-      console.log(`Connected: ${data.body.connected}, result: ${data.body.return_value}`); // tslint:disable-line
+      log(`Connected: ${data.body.connected}, result: ${data.body.return_value}`);
     }).catch((err: any) => {
-      console.error(`Unable to ${command} group ${group}:`, err);
+      error(`Unable to ${command} group ${group}:`, err);
     });
   });
 
