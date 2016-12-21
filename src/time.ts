@@ -49,3 +49,11 @@ export const dawnS = minuteS.filter(
 export const duskS = minuteS.filter(
   d => d.getHours() === todaySunInfo.dusk.getHours() && d.getMinutes() === todaySunInfo.dusk.getMinutes(),
 );
+
+export const sunriseS = minuteS.filter(
+  d => d.getHours() === todaySunInfo.sunrise.getHours() && d.getMinutes() === todaySunInfo.sunrise.getMinutes(),
+);
+
+export const sunsetS = minuteS.filter(
+  d => d.getHours() === todaySunInfo.sunset.getHours() && d.getMinutes() === todaySunInfo.sunset.getMinutes(),
+);

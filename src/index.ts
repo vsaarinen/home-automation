@@ -10,7 +10,7 @@ import { error, log } from './log';
 import reducer, { State } from './reducer';
 import { AutomationAction, AutomationActionCommand, takeActions } from './remote';
 import { initializeRoutes } from './routes';
-import { dawnS, duskS } from './time';
+import { sunriseS, sunsetS } from './time';
 
 // SET UP STORE
 const store = createStore<State>(reducer, undefined as any, autoRehydrate());
@@ -69,7 +69,7 @@ initializeRoutes(server, store);
 
 // SET UP TIME-BASED ACTIONS
 // Automatically turn off outer lights
-dawnS.forEach(() => {
+sunriseS.forEach(() => {
   const externalLightGroup = '3';
   const action: AutomationAction = {
     command: AutomationActionCommand.DISABLE_LIGHT,
@@ -80,7 +80,7 @@ dawnS.forEach(() => {
 });
 
 // Automatically turn on outer lights
-duskS.forEach(() => {
+sunsetS.forEach(() => {
   const externalLightGroup = '3';
   const action: AutomationAction = {
     command: AutomationActionCommand.ENABLE_LIGHT,
