@@ -81,20 +81,6 @@ const callParticleFunction = (command: string, group: string): Promise<void> =>
     });
   });
 
-// We need to wait for at least 2 seconds when enabling/disabling lights
-// because that's how long the button press is simulated for on the remote.
-const enableLight = (group: string) =>
-  new Promise((resolve, _reject) => {
-    callParticleFunction('turnOn', group)
-      .then(() => { setTimeout(() => resolve(), 2500); });
-  });
-
-const disableLight = (group: string) =>
-  new Promise((resolve, _reject) => {
-    callParticleFunction('turnOff', group)
-      .then(() => { setTimeout(() => resolve(), 2500); });
-  });
-
 // Takes the desired actions sequentially and stores them to the permanent storage
 export const takeActions = (actions: AutomationAction[]) => {
   let p: Promise<{} | void> = Promise.resolve();
@@ -104,16 +90,39 @@ export const takeActions = (actions: AutomationAction[]) => {
   return p;
 };
 
+let activeCommands: Promise<any>[] = [];
+
 const handleAction = (action: AutomationAction) => {
+  let functionToCall: string;
   log(`[action] Handling action ${action.command} on ${action.target}`);
   switch (action.command) {
     case AutomationActionCommand.ENABLE_LIGHT:
-      return enableLight(action.target)
-        .then(() => storeAction(action));
+      functionToCall = 'turnOn';
+      break;
     case AutomationActionCommand.DISABLE_LIGHT:
-      return disableLight(action.target)
-        .then(() => storeAction(action));
+      functionToCall = 'turnOff';
+      break;
     default:
       throw new Error(`Unknown command ${action.command}`);
   }
+
+  let actionPromise: Promise<any>;
+
+  // Only allow one remote action at a time. Thus we wait for any previous
+  // commands to finish.
+  return Promise.all(activeCommands)
+    .then(() => {
+      actionPromise = new Promise((resolve, _reject) =>
+        // We need to wait for at least 2 seconds when enabling/disabling lights
+        // because that's how long the button press is simulated for on the remote.
+        callParticleFunction(functionToCall, action.target)
+          .then(() => { setTimeout(() => resolve(action), 2500); }),
+      );
+      activeCommands.push(actionPromise);
+      return actionPromise;
+    })
+    .then(() => {
+      activeCommands = activeCommands.filter(command => command !== actionPromise);
+      return storeAction(action);
+    });
 };
