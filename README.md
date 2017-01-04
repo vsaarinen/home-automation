@@ -40,7 +40,16 @@ $ export PARTICLE_PASSWORD="yourParticlePassword"
 $ PORT=8080 npm start
 ```
 
-Compile the project into `dist/` as JavaScript:
+To enable Siri integration, install Homebridge on a computer that's on your local network
+(`npm i -g homebridge`) and start it by running the following command in the root of this project:
+
+```shell
+DEBUG=* homebridge -D -P ./homebridge-lights/
+```
+
+## Production build
+
+Compile the project as JavaScript into `dist/`:
 
 ```shell
 $ npm run dist
