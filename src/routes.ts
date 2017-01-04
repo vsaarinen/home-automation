@@ -78,7 +78,7 @@ export const initializeRoutes = (server: Hapi.Server, store: Store<State>) => {
     method: 'GET',
     path: '/light/{group}',
     handler: (request, reply) => {
-      const lightEnabled = store.getState().lastAutomaticLightState[request.params['group']];
+      const lightEnabled = store.getState().lastAutomaticLightState[request.params['group']]; // tslint:disable-line
       return reply(JSON.stringify(lightEnabled ? 1 : 0));
     },
   });
