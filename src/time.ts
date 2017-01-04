@@ -1,6 +1,11 @@
 // Inspiration from https://github.com/raimohanska/sensor-server/blob/master/time.coffee
 
 import { periodic } from 'most';
+import { Store } from 'redux';
+
+import { lightSetAutomatically } from './actions';
+import { error } from './log';
+import { AutomationAction, AutomationActionCommand, takeActions } from './remote';
 
 type SunCalcObject = {
   sunrise: Date;
@@ -42,18 +47,38 @@ const dayS = hourS.filter(d => d.getHours() === 0);
 
 dayS.forEach((d) => { todaySunInfo = calculateSunInfo(d); });
 
-export const dawnS = minuteS.filter(
-  d => d.getHours() === todaySunInfo.dawn.getHours() && d.getMinutes() === todaySunInfo.dawn.getMinutes(),
-);
-
-export const duskS = minuteS.filter(
-  d => d.getHours() === todaySunInfo.dusk.getHours() && d.getMinutes() === todaySunInfo.dusk.getMinutes(),
-);
-
-export const sunriseS = minuteS.filter(
+const sunriseS = minuteS.filter(
   d => d.getHours() === todaySunInfo.sunrise.getHours() && d.getMinutes() === todaySunInfo.sunrise.getMinutes(),
 );
 
-export const sunsetS = minuteS.filter(
+const sunsetS = minuteS.filter(
   d => d.getHours() === todaySunInfo.sunset.getHours() && d.getMinutes() === todaySunInfo.sunset.getMinutes(),
 );
+
+export const initializeTimeBasedActions = (store: Store<any>) => {
+  // Automatically turn off outer lights
+  sunriseS.forEach(() => {
+    const externalLightGroup = '3';
+    const action: AutomationAction = {
+      command: AutomationActionCommand.DISABLE_LIGHT,
+      target: externalLightGroup,
+      manual: false,
+    };
+    takeActions([action])
+      .then(() => { store.dispatch(lightSetAutomatically('3', false)); })
+      .catch(() => { error('[external-light] Unable to disable external light'); });
+  });
+
+  // Automatically turn on outer lights
+  sunsetS.forEach(() => {
+    const externalLightGroup = '3';
+    const action: AutomationAction = {
+      command: AutomationActionCommand.ENABLE_LIGHT,
+      target: externalLightGroup,
+      manual: false,
+    };
+    takeActions([action])
+      .then(() => { store.dispatch(lightSetAutomatically('3', true)); })
+      .catch(() => { error('[external-light] Unable to enable external light'); });
+  });
+};

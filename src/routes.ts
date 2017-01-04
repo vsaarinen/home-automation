@@ -2,13 +2,13 @@ import * as Hapi from 'hapi';
 import { Store } from 'redux';
 
 import {
+  lightSetAutomatically,
   removePersonPresent,
   setHumidity,
   setLightLevel,
   setPersonPresent,
   setPressure,
   setTemperature,
-  lightSetHomekit,
 } from './actions';
 import { permanentStorageHandler, storeLocationChange } from './permanent-store';
 import { State } from './reducer';
@@ -47,7 +47,7 @@ export const initializeRoutes = (server: Hapi.Server, store: Store<State>) => {
             manual: !homekit,
           };
           if (homekit) {
-            store.dispatch(lightSetHomekit(group, true));
+            store.dispatch(lightSetAutomatically(group, true));
           }
           break;
         case 'disable':
@@ -57,7 +57,7 @@ export const initializeRoutes = (server: Hapi.Server, store: Store<State>) => {
             manual: !homekit,
           };
           if (homekit) {
-            store.dispatch(lightSetHomekit(group, false));
+            store.dispatch(lightSetAutomatically(group, false));
           }
           break;
         default:
