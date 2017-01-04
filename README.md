@@ -11,6 +11,14 @@ to be able to control and query lights via HomeKit and Siri.
 Light, temperature and pressure data comes from an [Electric Imp](https://www.sparkfun.com/products/11395).
 Data about whether someone is home comes from [Locative](https://www.locative.io/).
 
+## Use cases
+
+- Automatically turn on lights when someone is home
+- Automatically turn off lights when no-one is home
+- Control lights using Siri or other services via HTTP
+- Automatically turn on external lights when the sun sets and turn them off at sunrise
+- Store time-series data about temperature, humidity, light level and air pressure
+
 ## Setup
 
 ```shell
