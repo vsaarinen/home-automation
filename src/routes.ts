@@ -66,7 +66,9 @@ export const initializeRoutes = (server: Hapi.Server, store: Store<State>) => {
   server.route({
     method: 'GET',
     path: '/lightLevel',
-    handler: (_request, reply) => reply(JSON.stringify(store.getState().lightLevel)),
+    handler: (_request, reply) => reply(JSON.stringify(
+      store.getState().lightLevel ? Math.round(store.getState().lightLevel) : 0
+    )),
   });
 
   server.route({
