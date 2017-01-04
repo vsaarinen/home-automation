@@ -40,15 +40,15 @@ export const removePersonPresent = (person: string): RemovePersonPresentAction =
   person,
 });
 
-export type LIGHT_SET_AUTOMATICALLY = 'LIGHT_SET_AUTOMATICALLY';
-export const LIGHT_SET_AUTOMATICALLY: LIGHT_SET_AUTOMATICALLY = 'LIGHT_SET_AUTOMATICALLY';
-interface LightSetAutomaticallyAction {
-  type: LIGHT_SET_AUTOMATICALLY;
+export type LIGHT_SET = 'LIGHT_SET';
+export const LIGHT_SET: LIGHT_SET = 'LIGHT_SET';
+interface LightSetAction {
+  type: LIGHT_SET;
   lightId: string;
   enabled: boolean;
 }
-export const lightSetAutomatically = (lightId: string, enabled: boolean): LightSetAutomaticallyAction => ({
-  type: LIGHT_SET_AUTOMATICALLY,
+export const lightSet = (lightId: string, enabled: boolean): LightSetAction => ({
+  type: LIGHT_SET,
   lightId,
   enabled,
 });
@@ -93,5 +93,5 @@ export type Action =
   SetPressureAction |
   ClearActionsToTakeAction | 
   SetPersonPresentAction |
-  LightSetAutomaticallyAction |
+  LightSetAction |
   RemovePersonPresentAction;

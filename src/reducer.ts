@@ -3,7 +3,7 @@ import { mapValues } from 'lodash';
 import {
   Action,
   CLEAR_ACTIONS_TO_TAKE,
-  LIGHT_SET_AUTOMATICALLY,
+  LIGHT_SET,
   REMOVE_PERSON_PRESENT,
   SET_HUMIDITY,
   SET_LIGHT_LEVEL,
@@ -64,7 +64,7 @@ const reducer = (state = initialState, action: Action): State => {
         lightSetAutomatically,
         lightLevel: action.value,
       };
-    case LIGHT_SET_AUTOMATICALLY:
+    case LIGHT_SET:
       return {
         ...state,
         lastAutomaticLightState: {

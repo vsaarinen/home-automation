@@ -2,7 +2,7 @@ import * as Hapi from 'hapi';
 import { Store } from 'redux';
 
 import {
-  lightSetAutomatically,
+  lightSet,
   removePersonPresent,
   setHumidity,
   setLightLevel,
@@ -34,9 +34,9 @@ export const initializeRoutes = (server: Hapi.Server, store: Store<State>) => {
 
   server.route({
     method: 'GET',
-    path: '/groups/{group}/{command}/{homekit?}',
+    path: '/groups/{group}/{command}/{manual?}',
     handler: (request, reply) => {
-      const { group, command, homekit } = request.params;
+      const { group, command, manual } = request.params;
       let action: AutomationAction;
 
       switch (command) {
@@ -44,21 +44,17 @@ export const initializeRoutes = (server: Hapi.Server, store: Store<State>) => {
           action = {
             command: AutomationActionCommand.ENABLE_LIGHT,
             target: group,
-            manual: !homekit,
+            manual: !!manual,
           };
-          if (homekit) {
-            store.dispatch(lightSetAutomatically(group, true));
-          }
+          store.dispatch(lightSet(group, true));
           break;
         case 'disable':
           action = {
             command: AutomationActionCommand.DISABLE_LIGHT,
             target: group,
-            manual: !homekit,
+            manual: !!manual,
           };
-          if (homekit) {
-            store.dispatch(lightSetAutomatically(group, false));
-          }
+          store.dispatch(lightSet(group, false));
           break;
         default:
           return reply(new Error(`Unknown command ${command}!`));

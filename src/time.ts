@@ -3,7 +3,7 @@
 import { periodic } from 'most';
 import { Store } from 'redux';
 
-import { lightSetAutomatically } from './actions';
+import { lightSet } from './actions';
 import { error } from './log';
 import { AutomationAction, AutomationActionCommand, takeActions } from './remote';
 
@@ -65,7 +65,7 @@ export const initializeTimeBasedActions = (store: Store<any>) => {
       manual: false,
     };
     takeActions([action])
-      .then(() => { store.dispatch(lightSetAutomatically('3', false)); })
+      .then(() => { store.dispatch(lightSet('3', false)); })
       .catch(() => { error('[external-light] Unable to disable external light'); });
   });
 
@@ -78,7 +78,7 @@ export const initializeTimeBasedActions = (store: Store<any>) => {
       manual: false,
     };
     takeActions([action])
-      .then(() => { store.dispatch(lightSetAutomatically('3', true)); })
+      .then(() => { store.dispatch(lightSet('3', true)); })
       .catch(() => { error('[external-light] Unable to enable external light'); });
   });
 };
