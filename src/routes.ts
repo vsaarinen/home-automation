@@ -8,6 +8,7 @@ import {
   setPersonPresent,
   setPressure,
   setTemperature,
+  lightSetHomekit,
 } from './actions';
 import { permanentStorageHandler, storeLocationChange } from './permanent-store';
 import { State } from './reducer';
@@ -33,17 +34,31 @@ export const initializeRoutes = (server: Hapi.Server, store: Store<State>) => {
 
   server.route({
     method: 'GET',
-    path: '/groups/{group}/{command}',
+    path: '/groups/{group}/{command}/{homekit?}',
     handler: (request, reply) => {
-      const { group, command } = request.params;
+      const { group, command, homekit } = request.params;
       let action: AutomationAction;
 
       switch (command) {
         case 'enable':
-          action = { command: AutomationActionCommand.ENABLE_LIGHT, target: group, manual: true };
+          action = {
+            command: AutomationActionCommand.ENABLE_LIGHT,
+            target: group,
+            manual: !homekit,
+          };
+          if (homekit) {
+            store.dispatch(lightSetHomekit(group, true));
+          }
           break;
         case 'disable':
-          action = { command: AutomationActionCommand.DISABLE_LIGHT, target: group, manual: true };
+          action = {
+            command: AutomationActionCommand.DISABLE_LIGHT,
+            target: group,
+            manual: !homekit,
+          };
+          if (homekit) {
+            store.dispatch(lightSetHomekit(group, false));
+          }
           break;
         default:
           return reply(new Error(`Unknown command ${command}!`));
@@ -65,10 +80,11 @@ export const initializeRoutes = (server: Hapi.Server, store: Store<State>) => {
 
   server.route({
     method: 'GET',
-    path: '/lightLevel',
-    handler: (_request, reply) => reply(JSON.stringify(
-      store.getState().lightLevel ? Math.round(store.getState().lightLevel) : 0
-    )),
+    path: '/light/{group}',
+    handler: (request, reply) => {
+      const lightEnabled = store.getState().lastAutomaticLightState[request.params['group']];
+      return reply(JSON.stringify(lightEnabled ? 1 : 0));
+    },
   });
 
   server.route({

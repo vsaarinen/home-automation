@@ -40,6 +40,19 @@ export const removePersonPresent = (person: string): RemovePersonPresentAction =
   person,
 });
 
+export type LIGHT_SET_HOMEKIT = 'LIGHT_SET_HOMEKIT';
+export const LIGHT_SET_HOMEKIT: LIGHT_SET_HOMEKIT = 'LIGHT_SET_HOMEKIT';
+interface LightSetHomekitAction {
+  type: LIGHT_SET_HOMEKIT;
+  lightId: string;
+  enabled: boolean;
+}
+export const lightSetHomekit = (lightId: string, enabled: boolean): LightSetHomekitAction => ({
+  type: LIGHT_SET_HOMEKIT,
+  lightId,
+  enabled,
+});
+
 export type SET_TEMPERATURE = 'SET_TEMPERATURE';
 export const SET_TEMPERATURE: SET_TEMPERATURE = 'SET_TEMPERATURE';
 interface SetTemperatureAction {
@@ -80,4 +93,5 @@ export type Action =
   SetPressureAction |
   ClearActionsToTakeAction | 
   SetPersonPresentAction |
+  LightSetHomekitAction |
   RemovePersonPresentAction;

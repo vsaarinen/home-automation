@@ -1,6 +1,9 @@
+import { mapValues } from 'lodash';
+
 import {
   Action,
   CLEAR_ACTIONS_TO_TAKE,
+  LIGHT_SET_HOMEKIT,
   REMOVE_PERSON_PRESENT,
   SET_HUMIDITY,
   SET_LIGHT_LEVEL,
@@ -18,6 +21,9 @@ export interface State {
   humidity: number;
   actionsToTake: AutomationAction[];
   lightSetAutomatically: boolean;
+  lastAutomaticLightState: {
+    [id: string]: boolean;
+  };
 }
 
 const initialState: State = {
@@ -28,6 +34,7 @@ const initialState: State = {
   humidity: 0,
   actionsToTake: [],
   lightSetAutomatically: false,
+  lastAutomaticLightState: {},
 };
 
 const MINIMUM_LIGHT_LEVEL = 100;
@@ -57,6 +64,14 @@ const reducer = (state = initialState, action: Action): State => {
         lightSetAutomatically,
         lightLevel: action.value,
       };
+    case LIGHT_SET_HOMEKIT:
+      return {
+        ...state,
+        lastAutomaticLightState: {
+          ...state.lastAutomaticLightState,
+          [action.lightId]: action.enabled,
+        },
+      };
     case SET_TEMPERATURE:
       return {
         ...state,
@@ -74,6 +89,8 @@ const reducer = (state = initialState, action: Action): State => {
       };
     case SET_PERSON_PRESENT:
       if (!state.peoplePresent.find(person => person === action.person)) {
+        let { lastAutomaticLightState } = state;
+
         if (
           !lightSetAutomatically &&
           state.peoplePresent.length === 0 &&
@@ -84,12 +101,14 @@ const reducer = (state = initialState, action: Action): State => {
             { command: AutomationActionCommand.ENABLE_LIGHT, target: '2' },
           ]);
           lightSetAutomatically = true;
+          lastAutomaticLightState = mapValues(lastAutomaticLightState, (_id) => true);
         }
 
         return {
           ...state,
           actionsToTake,
           lightSetAutomatically,
+          lastAutomaticLightState,
           peoplePresent: state.peoplePresent.concat([action.person]),
         };
       }
@@ -97,6 +116,7 @@ const reducer = (state = initialState, action: Action): State => {
       return state;
     case REMOVE_PERSON_PRESENT:
       if (state.peoplePresent.find(person => person === action.person)) {
+        let { lastAutomaticLightState } = state;
         let peoplePresent = state.peoplePresent.filter(person => person !== action.person);
         if (peoplePresent.length === 0) {
           actionsToTake = actionsToTake.concat([
@@ -106,10 +126,12 @@ const reducer = (state = initialState, action: Action): State => {
 
           // We reset the automatic light switching when the last person leaves the house
           lightSetAutomatically = false;
+          lastAutomaticLightState = mapValues(lastAutomaticLightState, (_id) => false);
         }
         return {
           ...state,
           actionsToTake,
+          lastAutomaticLightState,
           lightSetAutomatically,
           peoplePresent,
         };
