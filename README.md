@@ -15,7 +15,7 @@ Data about whether someone is home comes from [Locative](https://www.locative.io
 
 - Automatically turn on lights when someone is home
 - Automatically turn off lights when no-one is home
-- Control lights using Siri or other services via HTTP
+- Control lights using Siri and iOS devices
 - Automatically turn on external lights when the sun sets and turn them off at sunrise
 - Store time-series data about temperature, humidity, light level and air pressure
 
