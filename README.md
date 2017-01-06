@@ -5,8 +5,8 @@ It also allows for remote control of lights via an HTTP request. Data is stored 
 
 Lights are controlled via [cheap radio-controlled plugs](http://www.clasohlson.com/fi/Kaukokytkinsarja-3-kpl-Nexa-PE-3/36-4602).
 The [remote control](remote/) for these has been rewired to take commands from a [Particle](https://www.particle.io/products/hardware/photon-wifi-dev-kit)
-Spark Core. A [Homebridge](https://github.com/nfarina/homebridge) server is set up with a [custom plugin](https://github.com/vsaarinen/homebridge-lights)
-to be able to control and query lights via HomeKit and Siri.
+Spark Core. A [Homebridge](https://github.com/nfarina/homebridge) server is set up on a Raspberry Pi with a
+[custom plugin](https://github.com/vsaarinen/homebridge-lights) to be able to control and query lights via HomeKit and Siri.
 
 Light, temperature, humidity and pressure data comes from [sensors](sensors/) on an [Electric Imp](https://www.sparkfun.com/products/11395).
 Data about whether someone is home comes from [Locative](https://www.locative.io/).
