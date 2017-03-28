@@ -20,14 +20,14 @@ const observeStore = <T>(
   let currentState: T;
 
   const handleChange = () => {
-    let nextState = selector(theStore.getState());
+    const nextState = selector(theStore.getState());
     if (nextState !== currentState) {
       currentState = nextState;
       onChange(currentState);
     }
   };
 
-  let unsubscribe = theStore.subscribe(handleChange);
+  const unsubscribe = theStore.subscribe(handleChange);
   handleChange();
   return unsubscribe;
 };

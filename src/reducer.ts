@@ -117,7 +117,7 @@ const reducer = (state = initialState, action: Action): State => {
     case REMOVE_PERSON_PRESENT:
       if (state.peoplePresent.find(person => person === action.person)) {
         let { lastAutomaticLightState } = state;
-        let peoplePresent = state.peoplePresent.filter(person => person !== action.person);
+        const peoplePresent = state.peoplePresent.filter(person => person !== action.person);
         if (peoplePresent.length === 0) {
           actionsToTake = actionsToTake.concat([
             { command: AutomationActionCommand.DISABLE_LIGHT, target: '1' },
