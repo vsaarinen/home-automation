@@ -7,7 +7,7 @@ import { lightSet } from './actions';
 import { error } from './log';
 import { AutomationAction, AutomationActionCommand, takeActions } from './remote';
 
-type SunCalcObject = {
+interface SunCalcObject {
   sunrise: Date;
   sunriseEnd: Date;
   goldenHourEnd: Date;
