@@ -37,8 +37,8 @@ Once InfluxDB is running, start a development server with:
 ```shell
 $ export PARTICLE_EMAIL="your@email.address"
 $ export PARTICLE_PASSWORD="yourParticlePassword"
-$ export LATITUDE="1.234567" # Your location's latitude
-$ export LONGTITUDE="5.433211" # Your location's longtitude
+$ export LATITUDE="1.234567"
+$ export LONGTITUDE="5.433211"
 $ PORT=8080 npm start
 ```
 
@@ -62,4 +62,6 @@ $ npm run dist
 
 - **PARTICLE_EMAIL**: Your Particle account's email address (required).
 - **PARTICLE_PASSWORD**: Your Particle account's password (required).
+- **LONGTITUDE**: Your location's longtitude (required). Used to calculate sunset/sunrise.
+- **LATITUDE**: Your location's latitude (required). Used to calculate sunset/sunrise.
 - **PORT**: The port that the server should run on. Defaults to 8080.
