@@ -30,8 +30,8 @@ interface SunCalc {
 const suncalc: SunCalc = require('suncalc');
 
 const currentLocation = {
-  latitude: 60.173231,
-  longtitude: 24.959087,
+  latitude: parseFloat(process.env.LATITUDE),
+  longtitude: parseFloat(process.env.LONGTITUDE),
 };
 
 const now = () => new Date();

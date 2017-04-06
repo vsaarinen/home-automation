@@ -37,11 +37,14 @@ Once InfluxDB is running, start a development server with:
 ```shell
 $ export PARTICLE_EMAIL="your@email.address"
 $ export PARTICLE_PASSWORD="yourParticlePassword"
+$ export LATITUDE="1.234567" # Your location's latitude
+$ export LONGTITUDE="5.433211" # Your location's longtitude
 $ PORT=8080 npm start
 ```
 
 To enable Siri integration, install Homebridge on a computer that's on your local network
-(`npm i -g homebridge`) and start it by running the following command in the root of this project:
+(`npm i -g homebridge`), fetch the [homebridge-lights](https://github.com/vsaarinen/homebridge-lights)
+plugin into the current folder and start it by running the following command:
 
 ```shell
 DEBUG=* homebridge -D -P ./homebridge-lights/
