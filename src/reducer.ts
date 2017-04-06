@@ -1,16 +1,6 @@
 import { mapValues } from 'lodash';
 
-import {
-  Action,
-  CLEAR_ACTIONS_TO_TAKE,
-  LIGHT_SET,
-  REMOVE_PERSON_PRESENT,
-  SET_HUMIDITY,
-  SET_LIGHT_LEVEL,
-  SET_PERSON_PRESENT,
-  SET_PRESSURE,
-  SET_TEMPERATURE,
-} from './actions';
+import { Action } from './actions';
 import { AutomationAction, AutomationActionCommand } from './remote';
 
 export interface State {
@@ -45,7 +35,7 @@ const reducer = (state = initialState, action: Action): State => {
   let { actionsToTake, lightSetAutomatically } = state;
 
   switch (action.type) {
-    case SET_LIGHT_LEVEL:
+    case 'SET_LIGHT_LEVEL':
       if (
         !lightSetAutomatically &&
         state.peoplePresent.length > 0 &&
@@ -64,7 +54,7 @@ const reducer = (state = initialState, action: Action): State => {
         lightSetAutomatically,
         lightLevel: action.value,
       };
-    case LIGHT_SET:
+    case 'LIGHT_SET':
       return {
         ...state,
         lastAutomaticLightState: {
@@ -72,22 +62,22 @@ const reducer = (state = initialState, action: Action): State => {
           [action.lightId]: action.enabled,
         },
       };
-    case SET_TEMPERATURE:
+    case 'SET_TEMPERATURE':
       return {
         ...state,
         temperature: action.value,
       };
-    case SET_HUMIDITY:
+    case 'SET_HUMIDITY':
       return {
         ...state,
         humidity: action.value,
       };
-    case SET_PRESSURE:
+    case 'SET_PRESSURE':
       return {
         ...state,
         pressure: action.value,
       };
-    case SET_PERSON_PRESENT:
+    case 'SET_PERSON_PRESENT':
       if (!state.peoplePresent.find(person => person === action.person)) {
         let { lastAutomaticLightState } = state;
 
@@ -114,7 +104,7 @@ const reducer = (state = initialState, action: Action): State => {
       }
 
       return state;
-    case REMOVE_PERSON_PRESENT:
+    case 'REMOVE_PERSON_PRESENT':
       if (state.peoplePresent.find(person => person === action.person)) {
         let { lastAutomaticLightState } = state;
         const peoplePresent = state.peoplePresent.filter(person => person !== action.person);
@@ -138,7 +128,7 @@ const reducer = (state = initialState, action: Action): State => {
       }
 
       return state;
-    case CLEAR_ACTIONS_TO_TAKE:
+    case 'CLEAR_ACTIONS_TO_TAKE':
       return {
         ...state,
         actionsToTake: [],
