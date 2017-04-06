@@ -29,7 +29,6 @@
     "hapi": "^16.0.1",
     "inert": "^4.0.3",
     "influx": "^5.0.4",
-    "lodash": "^4.17.4",
     "most": "^1.1.1",
     "particle-api-js": "^6.4.1",
     "redux": "^3.6.0",
@@ -39,7 +38,6 @@
   },
   "devDependencies": {
     "@types/hapi": "^13.0.37",
-    "@types/lodash": "^4.14.45",
     "nodemon": "^1.11.0",
     "ts-node": "^1.7.2",
     "typescript": "^2.1.4"
