@@ -36,10 +36,16 @@ const reducer = (state = initialState, action: Action): State => {
 
   switch (action.type) {
     case 'SET_LIGHT_LEVEL':
+      // TODO: Urgh, the reducer is no longer a pure function. Let's switch over to
+      // a fully reactive solution at some point.
+      const now = new Date();
+
       if (
         !lightSetAutomatically &&
         state.peoplePresent.length > 0 &&
-        action.value < MINIMUM_LIGHT_LEVEL
+        action.value < MINIMUM_LIGHT_LEVEL &&
+        // Only set the light automatically if I'm home and it's not after 21
+        now.getHours() < 21 && now.getHours() > 9
       ) {
         actionsToTake = actionsToTake.concat([
           { command: AutomationActionCommand.ENABLE_LIGHT, target: '1' },
