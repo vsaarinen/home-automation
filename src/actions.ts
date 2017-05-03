@@ -83,7 +83,7 @@ export type Action =
   SetHummidityAction |
   SetTemperatureAction |
   SetPressureAction |
-  ClearActionsToTakeAction | 
+  ClearActionsToTakeAction |
   SetPersonPresentAction |
   LightSetAction |
   RemovePersonPresentAction;

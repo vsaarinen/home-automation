@@ -22,7 +22,7 @@ interface SunCalcObject {
   nightEnd: Date;
   nauticalDawn: Date;
   dawn: Date;
-};
+}
 
 interface SunCalc {
   getTimes(date: Date, latitude: number, longtitude: number): SunCalcObject;

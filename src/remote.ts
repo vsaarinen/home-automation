@@ -17,7 +17,7 @@ interface Login {
   access_token: string;
   expires_in: number;
   refresh_token: string;
-};
+}
 
 interface Device {
   id: string;
@@ -42,7 +42,8 @@ interface FunctionCall {
 export enum AutomationActionCommand {
   DISABLE_LIGHT,
   ENABLE_LIGHT,
-};
+}
+
 export interface AutomationAction {
   command: AutomationActionCommand;
   target: string;
