@@ -43,10 +43,11 @@ const reducer = (state = initialState, action: Action): State => {
         // Only set the light automatically if I'm home and it's not after 21
         timestamp.getHours() < 21 && timestamp.getHours() > 9
       ) {
-        actionsToTake = actionsToTake.concat([
+        actionsToTake = [
+          ...actionsToTake,
           { command: AutomationActionCommand.ENABLE_LIGHT, target: '1' },
           { command: AutomationActionCommand.ENABLE_LIGHT, target: '2' },
-        ]);
+        ];
         lightSetAutomatically = true;
         lastAutomaticLightState = {
           ...lastAutomaticLightState,
@@ -60,7 +61,7 @@ const reducer = (state = initialState, action: Action): State => {
         actionsToTake,
         lightSetAutomatically,
         lastAutomaticLightState,
-        lightLevel: action.value,
+        lightLevel: value,
       };
     case 'LIGHT_SET':
       return {
@@ -92,10 +93,11 @@ const reducer = (state = initialState, action: Action): State => {
           state.peoplePresent.length === 0 &&
           state.lightLevel < MINIMUM_LIGHT_LEVEL
         ) {
-          actionsToTake = actionsToTake.concat([
+          actionsToTake = [
+            ...actionsToTake,
             { command: AutomationActionCommand.ENABLE_LIGHT, target: '1' },
             { command: AutomationActionCommand.ENABLE_LIGHT, target: '2' },
-          ]);
+          ];
           lightSetAutomatically = true;
           lastAutomaticLightState = {
             ...lastAutomaticLightState,
@@ -109,7 +111,7 @@ const reducer = (state = initialState, action: Action): State => {
           actionsToTake,
           lightSetAutomatically,
           lastAutomaticLightState,
-          peoplePresent: state.peoplePresent.concat([action.person]),
+          peoplePresent: [...state.peoplePresent, action.person],
         };
       }
 
@@ -118,10 +120,11 @@ const reducer = (state = initialState, action: Action): State => {
       if (state.peoplePresent.find(person => person === action.person)) {
         const peoplePresent = state.peoplePresent.filter(person => person !== action.person);
         if (peoplePresent.length === 0) {
-          actionsToTake = actionsToTake.concat([
+          actionsToTake = [
+            ...actionsToTake,
             { command: AutomationActionCommand.DISABLE_LIGHT, target: '1' },
             { command: AutomationActionCommand.DISABLE_LIGHT, target: '2' },
-          ]);
+          ];
 
           // We reset the automatic light switching when the last person leaves the house
           lightSetAutomatically = false;
