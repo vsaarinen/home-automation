@@ -101,7 +101,7 @@ export const initializeRoutes = (server: Hapi.Server, store: Store<State>) => {
           store.dispatch(setHumidity(value));
           break;
         case 'light':
-          store.dispatch(setLightLevel(value));
+          store.dispatch(setLightLevel(value, new Date()));
           break;
         default:
           return reply(new Error(`Unknown measurement type ${type}!`));

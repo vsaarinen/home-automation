@@ -2,10 +2,12 @@ export type SET_LIGHT_LEVEL = 'SET_LIGHT_LEVEL';
 interface SetLightLevelAction {
   type: SET_LIGHT_LEVEL;
   value: number;
+  timestamp: Date;
 }
-export const setLightLevel = (value: number): SetLightLevelAction => ({
+export const setLightLevel = (value: number, timestamp: Date): SetLightLevelAction => ({
   type: 'SET_LIGHT_LEVEL',
   value,
+  timestamp,
 });
 
 export type CLEAR_ACTIONS_TO_TAKE = 'CLEAR_ACTIONS_TO_TAKE';
