@@ -28,5 +28,5 @@ initializeRoutes(server, store);
 // START SERVER
 server.start((err) => {
   if (err) { throw err; }
-  log('[server] Server running at:', server.info.uri);
+  log('[server] Server running at:', server.info!.uri);
 });
