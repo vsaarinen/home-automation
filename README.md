@@ -3,9 +3,8 @@
 This server stores sensor measurements and controls lights (and other devices) based on certain criteria.
 It also allows for remote control of lights via an HTTP request. Data is stored in InfluxDB.
 
-Lights are controlled via [cheap radio-controlled plugs](http://www.clasohlson.com/fi/Kaukokytkinsarja-3-kpl-Nexa-PE-3/36-4602).
-The [remote control](remote/) for these has been rewired to take commands from a [Particle](https://www.particle.io/products/hardware/photon-wifi-dev-kit)
-Spark Core. A [Homebridge](https://github.com/nfarina/homebridge) server is set up on a Raspberry Pi with a
+Lights are connected to [cheap radio-controlled plugs](http://www.clasohlson.com/fi/Kaukokytkinsarja-3-kpl-Nexa-PE-3/36-4602) that are controlled
+by a TellStick Net. A [Homebridge](https://github.com/nfarina/homebridge) server is set up on a Raspberry Pi with a
 [custom plugin](https://github.com/vsaarinen/homebridge-lights) to be able to control and query lights via HomeKit and Siri.
 
 Light, temperature, humidity and pressure data comes from [sensors](sensors/) on an [Electric Imp](https://www.sparkfun.com/products/11395).
@@ -35,8 +34,10 @@ $ influxd -config /usr/local/etc/influxdb.conf
 Once InfluxDB is running, start a development server with:
 
 ```shell
-$ export PARTICLE_EMAIL="your@email.address"
-$ export PARTICLE_PASSWORD="yourParticlePassword"
+$ export TELLDUS_PUBLIC_KEY="XXX"
+$ export TELLDUS_PRIVATE_KEY="XXX"
+$ export TELLDUS_TOKEN="XXX"
+$ export TELLDUS_SECRET_TOKEN="XXX"
 $ export LATITUDE="1.234567"
 $ export LONGTITUDE="5.433211"
 $ PORT=8080 npm start
@@ -60,8 +61,7 @@ $ npm run dist
 
 ## Environment variables
 
-- **PARTICLE_EMAIL**: Your Particle account's email address (required).
-- **PARTICLE_PASSWORD**: Your Particle account's password (required).
+- **TELLDUS_PUBLIC_KEY**, **TELLDUS_PRIVATE_KEY**, **TELLDUS_TOKEN**, **TELLDUS_SECRET_TOKEN**: Your private Telldus API credentials to control the TellStick Net.
 - **LONGTITUDE**: Your location's longtitude (required). Used to calculate sunset/sunrise.
 - **LATITUDE**: Your location's latitude (required). Used to calculate sunset/sunrise.
 - **PORT**: The port that the server should run on. Defaults to 8080.
