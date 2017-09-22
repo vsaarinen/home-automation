@@ -116,7 +116,7 @@ function handleAction(
     action.command === AutomationActionCommand.ENABLE_DEVICE,
     (err: any, _result: any) => {
       if (!!err) {
-        error('[telldus] onOffDevice error: ' + err);
+        error('[telldus] onOffDevice error: ' + err.message);
         reject('Unable to send on/off command');
       }
 
