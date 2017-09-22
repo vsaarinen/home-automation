@@ -103,7 +103,7 @@ function handleAction(
       targetDevice = findDevice(action.target);
       break;
     case 'lights':
-      targetDevice = findDevice('all lights');
+      targetDevice = devices.find(d => d.name.toLowerCase() === 'lights');
       break;
   }
 
