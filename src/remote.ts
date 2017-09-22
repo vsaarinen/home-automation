@@ -67,9 +67,11 @@ export function takeActions(actions: AutomationAction[]) {
   }
 
   return Promise.all(
-    actions.map(action => new Promise(
-      (resolve, reject) => handleAction(action, resolve, reject),
-    )));
+    actions.map(
+      action =>
+        new Promise((resolve, reject) => handleAction(action, resolve, reject)),
+    ),
+  );
 }
 
 function findDevice(name: string) {

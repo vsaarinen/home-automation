@@ -6,7 +6,11 @@ import { Store } from 'redux';
 import { lightSet } from './actions';
 import { Device } from './devices';
 import { error } from './log';
-import { AutomationAction, AutomationActionCommand, takeActions } from './remote';
+import {
+  AutomationAction,
+  AutomationActionCommand,
+  takeActions,
+} from './remote';
 
 interface SunCalcObject {
   sunrise: Date;
@@ -30,8 +34,10 @@ interface SunCalc {
 }
 const suncalc: SunCalc = require('suncalc');
 
-if (!process.env.LATITUDE || process.env.LONGTITUDE) {
-  throw new Error('LATITUDE and LONGTITUDE environment variables need to be defined');
+if (!process.env.LATITUDE || process.env.LONGTITUDE) {
+  throw new Error(
+    'LATITUDE and LONGTITUDE environment variables need to be defined',
+  );
 }
 
 const currentLocation = {
@@ -50,14 +56,20 @@ const minuteS = periodic(1000 * 60).map(now);
 const hourS = minuteS.filter(d => d.getMinutes() === 0);
 const dayS = hourS.filter(d => d.getHours() === 0);
 
-dayS.forEach((d) => { todaySunInfo = calculateSunInfo(d); });
+dayS.forEach(d => {
+  todaySunInfo = calculateSunInfo(d);
+});
 
 const sunriseS = minuteS.filter(
-  d => d.getHours() === todaySunInfo.sunrise.getHours() && d.getMinutes() === todaySunInfo.sunrise.getMinutes(),
+  d =>
+    d.getHours() === todaySunInfo.sunrise.getHours() &&
+    d.getMinutes() === todaySunInfo.sunrise.getMinutes(),
 );
 
 const sunsetS = minuteS.filter(
-  d => d.getHours() === todaySunInfo.sunset.getHours() && d.getMinutes() === todaySunInfo.sunset.getMinutes(),
+  d =>
+    d.getHours() === todaySunInfo.sunset.getHours() &&
+    d.getMinutes() === todaySunInfo.sunset.getMinutes(),
 );
 
 export const initializeTimeBasedActions = (store: Store<any>) => {
@@ -71,8 +83,12 @@ export const initializeTimeBasedActions = (store: Store<any>) => {
       manual: false,
     };
     takeActions([action])
-      .then(() => { store.dispatch(lightSet(externalLightGroup, false)); })
-      .catch(() => { error('[external-light] Unable to disable external light'); });
+      .then(() => {
+        store.dispatch(lightSet(externalLightGroup, false));
+      })
+      .catch(() => {
+        error('[external-light] Unable to disable external light');
+      });
   });
 
   // Automatically turn on outer lights
@@ -83,7 +99,11 @@ export const initializeTimeBasedActions = (store: Store<any>) => {
       manual: false,
     };
     takeActions([action])
-      .then(() => { store.dispatch(lightSet(externalLightGroup, true)); })
-      .catch(() => { error('[external-light] Unable to enable external light'); });
+      .then(() => {
+        store.dispatch(lightSet(externalLightGroup, true));
+      })
+      .catch(() => {
+        error('[external-light] Unable to enable external light');
+      });
   });
 };

@@ -14,60 +14,48 @@ const influx = new InfluxDB({
       fields: {
         temperature: FieldType.FLOAT,
       },
-      tags: [
-        'location',
-      ],
+      tags: ['location'],
     },
     {
       measurement: 'pressure',
       fields: {
         pressure: FieldType.FLOAT,
       },
-      tags: [
-        'location',
-      ],
+      tags: ['location'],
     },
     {
       measurement: 'humidity',
       fields: {
         humidity: FieldType.FLOAT,
       },
-      tags: [
-        'location',
-      ],
+      tags: ['location'],
     },
     {
       measurement: 'light',
       fields: {
         light: FieldType.FLOAT,
       },
-      tags: [
-        'location',
-      ],
+      tags: ['location'],
     },
     {
       measurement: 'switchedLight',
       fields: {
         enabled: FieldType.BOOLEAN,
       },
-      tags: [
-        'group',
-        'manual',
-      ],
+      tags: ['group', 'manual'],
     },
     {
       measurement: 'personLocation',
       fields: {
         isHome: FieldType.BOOLEAN,
       },
-      tags: [
-        'person',
-      ],
+      tags: ['person'],
     },
   ],
 });
 
-influx.getDatabaseNames()
+influx
+  .getDatabaseNames()
   .then(names => {
     if (names.indexOf(DB_NAME) === -1) {
       return influx.createDatabase(DB_NAME);
@@ -82,22 +70,35 @@ influx.getDatabaseNames()
     error('[influxdb] Error creating Influx database!', err);
   });
 
-const storeMeasurementData = (valueType: string, value: number, tags: { [tag: string]: string }) =>
-  influx.writeMeasurement(valueType, [
-    {
-      tags,
-      fields: { [valueType]: value },
-    },
-  ])
-  .then(() => {
-    log(`[influxdb] Stored data to InfluxDB: [${valueType}] ${value} @ ${tags['location']}`); // tslint:disable-line
-  })
-  .catch(err => {
-    error(`[influxdb] Error saving data to InfluxDB! ${err.stack}`);
-    throw new Error('Error saving data to InfluxDB!');
-  });
+const storeMeasurementData = (
+  valueType: string,
+  value: number,
+  tags: { [tag: string]: string },
+) =>
+  influx
+    .writeMeasurement(valueType, [
+      {
+        tags,
+        fields: { [valueType]: value },
+      },
+    ])
+    .then(() => {
+      log(
+        `[influxdb] Stored data to InfluxDB: [${valueType}] ${value} @ ${tags[
+          'location'
+        ]}`,
+      ); // tslint:disable-line
+    })
+    .catch(err => {
+      error(`[influxdb] Error saving data to InfluxDB! ${err.stack}`);
+      throw new Error('Error saving data to InfluxDB!');
+    });
 
-export const permanentStorageHandler = (type: string, value: string, location: string) => {
+export const permanentStorageHandler = (
+  type: string,
+  value: string,
+  location: string,
+) => {
   switch (type) {
     case 'temperature':
     case 'pressure':
@@ -119,35 +120,43 @@ export const storeAction = (action: AutomationAction) => {
       const group = action.target;
       const enabled = action.command === AutomationActionCommand.ENABLE_DEVICE;
 
-      return influx.writeMeasurement('switchedLight', [
-        {
-          tags: { group, manual: manual.toString() },
-          fields: { enabled },
-        },
-      ])
-      .then(() => {
-        log(`[influxdb] Stored data to InfluxDB: [switchedLight] ${enabled}, group ${group}, manual ${manual}`);
-      })
-      .catch(err => {
-        error(`[influxdb] Error saving action data to InfluxDB! ${err.stack}`);
-        throw new Error('Error saving action data to InfluxDB!');
-      });
+      return influx
+        .writeMeasurement('switchedLight', [
+          {
+            tags: { group, manual: manual.toString() },
+            fields: { enabled },
+          },
+        ])
+        .then(() => {
+          log(
+            `[influxdb] Stored data to InfluxDB: [switchedLight] ${enabled}, group ${group}, manual ${manual}`,
+          );
+        })
+        .catch(err => {
+          error(
+            `[influxdb] Error saving action data to InfluxDB! ${err.stack}`,
+          );
+          throw new Error('Error saving action data to InfluxDB!');
+        });
     default:
       throw new Error(`Unable to store unknown action type: ${action.command}`);
   }
 };
 
 export const storeLocationChange = (person: string, isHome: boolean) =>
-  influx.writeMeasurement('personLocation', [
-    {
-      tags: { person },
-      fields: { isHome },
-    },
-  ])
-  .then(() => {
-    log(`[influxdb] Stored data to InfluxDB: [personLocation] ${person}, isHome ${isHome}`);
-  })
-  .catch(err => {
-    error(`[influxdb] Error saving location data to InfluxDB! ${err.stack}`);
-    throw new Error('Error saving location data to InfluxDB!');
-  });
+  influx
+    .writeMeasurement('personLocation', [
+      {
+        tags: { person },
+        fields: { isHome },
+      },
+    ])
+    .then(() => {
+      log(
+        `[influxdb] Stored data to InfluxDB: [personLocation] ${person}, isHome ${isHome}`,
+      );
+    })
+    .catch(err => {
+      error(`[influxdb] Error saving location data to InfluxDB! ${err.stack}`);
+      throw new Error('Error saving location data to InfluxDB!');
+    });

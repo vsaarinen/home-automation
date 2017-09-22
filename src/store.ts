@@ -36,8 +36,13 @@ const handleActionsToTake = (actionsToTake: AutomationAction[]) => {
   if (actionsToTake.length > 0) {
     const actions = [...actionsToTake];
     store.dispatch(clearActionsToTake());
-    takeActions(actions)
-      .catch((e: any) => { error(`[redux-state] Taking ${actions.length} actions failed: ${JSON.stringify(e)}`); });
+    takeActions(actions).catch((e: any) => {
+      error(
+        `[redux-state] Taking ${actions.length} actions failed: ${JSON.stringify(
+          e,
+        )}`,
+      );
+    });
   }
 };
 

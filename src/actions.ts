@@ -6,7 +6,10 @@ interface SetLightLevelAction {
   value: number;
   timestamp: Date;
 }
-export const setLightLevel = (value: number, timestamp: Date): SetLightLevelAction => ({
+export const setLightLevel = (
+  value: number,
+  timestamp: Date,
+): SetLightLevelAction => ({
   type: 'SET_LIGHT_LEVEL',
   value,
   timestamp,
@@ -35,7 +38,9 @@ interface RemovePersonPresentAction {
   type: REMOVE_PERSON_PRESENT;
   person: string;
 }
-export const removePersonPresent = (person: string): RemovePersonPresentAction => ({
+export const removePersonPresent = (
+  person: string,
+): RemovePersonPresentAction => ({
   type: 'REMOVE_PERSON_PRESENT',
   person,
 });
@@ -46,7 +51,10 @@ interface LightSetAction {
   lightId: Device;
   enabled: boolean;
 }
-export const lightSet = (lightId: Device, enabled: boolean): LightSetAction => ({
+export const lightSet = (
+  lightId: Device,
+  enabled: boolean,
+): LightSetAction => ({
   type: 'LIGHT_SET',
   lightId,
   enabled,
@@ -83,11 +91,11 @@ export const setPressure = (value: number): SetPressureAction => ({
 });
 
 export type Action =
-  SetLightLevelAction |
-  SetHummidityAction |
-  SetTemperatureAction |
-  SetPressureAction |
-  ClearActionsToTakeAction |
-  SetPersonPresentAction |
-  LightSetAction |
-  RemovePersonPresentAction;
+  | SetLightLevelAction
+  | SetHummidityAction
+  | SetTemperatureAction
+  | SetPressureAction
+  | ClearActionsToTakeAction
+  | SetPersonPresentAction
+  | LightSetAction
+  | RemovePersonPresentAction;
