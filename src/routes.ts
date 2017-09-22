@@ -10,9 +10,17 @@ import {
   setPressure,
   setTemperature,
 } from './actions';
-import { permanentStorageHandler, storeLocationChange } from './permanent-store';
+import { Device } from './devices';
+import {
+  permanentStorageHandler,
+  storeLocationChange,
+} from './permanent-store';
 import { State } from './reducer';
-import { AutomationAction, AutomationActionCommand, takeActions } from './remote';
+import {
+  AutomationAction,
+  AutomationActionCommand,
+  takeActions,
+} from './remote';
 
 const Inert = require('inert'); // tslint:disable-line
 
@@ -34,27 +42,29 @@ export const initializeRoutes = (server: Hapi.Server, store: Store<State>) => {
 
   server.route({
     method: 'GET',
-    path: '/groups/{group}/{command}/{manual?}',
+    path: '/control/{target}/{command}/{manual?}',
     handler: (request, reply) => {
-      const { group, command, manual } = request.params;
+      const { command, manual } = request.params;
+      const target = request.params.target as Device;
+      // TODO: validate target?
       let action: AutomationAction;
 
       switch (command) {
         case 'enable':
           action = {
-            command: AutomationActionCommand.ENABLE_LIGHT,
-            target: group,
+            command: AutomationActionCommand.ENABLE_DEVICE,
+            target,
             manual: !!manual,
           };
-          store.dispatch(lightSet(group, true));
+          store.dispatch(lightSet(target, true));
           break;
         case 'disable':
           action = {
-            command: AutomationActionCommand.DISABLE_LIGHT,
-            target: group,
+            command: AutomationActionCommand.DISABLE_DEVICE,
+            target,
             manual: !!manual,
           };
-          store.dispatch(lightSet(group, false));
+          store.dispatch(lightSet(target, false));
           break;
         default:
           return reply(new Error(`Unknown command ${command}!`));
@@ -62,8 +72,14 @@ export const initializeRoutes = (server: Hapi.Server, store: Store<State>) => {
 
       return reply(
         takeActions([action])
-          .then(() => `Command ${command} sent to group ${group}`)
-          .catch((e: any) => Promise.reject(new Error(`Unable to ${command} group ${group}: ${JSON.stringify(e)}`))),
+          .then(() => `Command ${command} sent to target ${target}`)
+          .catch((e: any) =>
+            Promise.reject(
+              new Error(
+                `Unable to ${command} target ${target}: ${JSON.stringify(e)}`,
+              ),
+            ),
+          ),
       );
     },
   });
@@ -78,7 +94,9 @@ export const initializeRoutes = (server: Hapi.Server, store: Store<State>) => {
     method: 'GET',
     path: '/light/{group}',
     handler: (request, reply) => {
-      const lightEnabled = store.getState().lastAutomaticLightState[request.params['group']]; // tslint:disable-line
+      const lightEnabled = store.getState().lastAutomaticLightState[
+        request.params.group
+      ]; // tslint:disable-line
       return reply(JSON.stringify(lightEnabled ? 1 : 0));
     },
   });
@@ -110,7 +128,11 @@ export const initializeRoutes = (server: Hapi.Server, store: Store<State>) => {
       return reply(
         permanentStorageHandler(type, value, location)
           .then(() => 'ok!')
-          .catch((_e: any) => { throw new Error(`Unable to store ${type} measurement group ${value} into database`); }),
+          .catch((_e: any) => {
+            throw new Error(
+              `Unable to store ${type} measurement group ${value} into database`,
+            );
+          }),
       );
     },
   });
@@ -133,7 +155,9 @@ export const initializeRoutes = (server: Hapi.Server, store: Store<State>) => {
         storeLocationChange(person, action === 'arriving')
           .then(() => 'ok!')
           .catch((_e: any) => {
-            throw new Error(`Unable to store ${action} for ${person} into database`);
+            throw new Error(
+              `Unable to store ${action} for ${person} into database`,
+            );
           }),
       );
     },

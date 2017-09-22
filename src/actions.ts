@@ -1,3 +1,5 @@
+import { Device } from './devices';
+
 export type SET_LIGHT_LEVEL = 'SET_LIGHT_LEVEL';
 interface SetLightLevelAction {
   type: SET_LIGHT_LEVEL;
@@ -41,10 +43,10 @@ export const removePersonPresent = (person: string): RemovePersonPresentAction =
 export type LIGHT_SET = 'LIGHT_SET';
 interface LightSetAction {
   type: LIGHT_SET;
-  lightId: string;
+  lightId: Device;
   enabled: boolean;
 }
-export const lightSet = (lightId: string, enabled: boolean): LightSetAction => ({
+export const lightSet = (lightId: Device, enabled: boolean): LightSetAction => ({
   type: 'LIGHT_SET',
   lightId,
   enabled,

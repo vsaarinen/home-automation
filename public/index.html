@@ -32,19 +32,14 @@ button {
 <body>
 <table>
   <tr>
-    <td><strong>Valot #1</strong></td>
-    <td><button onclick="httpGetAsync('/groups/1/enable')">Päälle</button></td>
-    <td><button onclick="httpGetAsync('/groups/1/disable')">Pois</button></td>
-  </tr>
-  <tr>
-    <td><strong>Valot #2</strong></td>
-    <td><button onclick="httpGetAsync('/groups/2/enable')">Päälle</button></td>
-    <td><button onclick="httpGetAsync('/groups/2/disable')">Pois</button></td>
+    <td><strong>Valot</strong></td>
+    <td><button onclick="httpGetAsync('/control/lights/enable/manual')">Päälle</button></td>
+    <td><button onclick="httpGetAsync('/control/lights/disable/manual')">Pois</button></td>
   </tr>
   <tr>
     <td><strong>Kaiuttimet</strong></td>
-    <td><button onclick="httpGetAsync('/groups/3/enable')">Päälle</button></td>
-    <td><button onclick="httpGetAsync('/groups/3/disable')">Pois</button></td>
+    <td><button onclick="httpGetAsync('/control/speakers/enable/manual')">Päälle</button></td>
+    <td><button onclick="httpGetAsync('/control/speakers/disable/manual')">Pois</button></td>
   </tr>
 </table>
 </body>

@@ -4,6 +4,7 @@ import { periodic } from 'most';
 import { Store } from 'redux';
 
 import { lightSet } from './actions';
+import { Device } from './devices';
 import { error } from './log';
 import { AutomationAction, AutomationActionCommand, takeActions } from './remote';
 
@@ -29,9 +30,13 @@ interface SunCalc {
 }
 const suncalc: SunCalc = require('suncalc');
 
+if (!process.env.LATITUDE || process.env.LONGTITUDE) {
+  throw new Error('LATITUDE and LONGTITUDE environment variables need to be defined');
+}
+
 const currentLocation = {
-  latitude: parseFloat(process.env.LATITUDE),
-  longtitude: parseFloat(process.env.LONGTITUDE),
+  latitude: parseFloat(process.env.LATITUDE!),
+  longtitude: parseFloat(process.env.LONGTITUDE!),
 };
 
 const now = () => new Date();
@@ -56,29 +61,29 @@ const sunsetS = minuteS.filter(
 );
 
 export const initializeTimeBasedActions = (store: Store<any>) => {
+  const externalLightGroup: Device = 'outside';
+
   // Automatically turn off outer lights
   sunriseS.forEach(() => {
-    const externalLightGroup = '3';
     const action: AutomationAction = {
-      command: AutomationActionCommand.DISABLE_LIGHT,
+      command: AutomationActionCommand.DISABLE_DEVICE,
       target: externalLightGroup,
       manual: false,
     };
     takeActions([action])
-      .then(() => { store.dispatch(lightSet('3', false)); })
+      .then(() => { store.dispatch(lightSet(externalLightGroup, false)); })
       .catch(() => { error('[external-light] Unable to disable external light'); });
   });
 
   // Automatically turn on outer lights
   sunsetS.forEach(() => {
-    const externalLightGroup = '3';
     const action: AutomationAction = {
-      command: AutomationActionCommand.ENABLE_LIGHT,
+      command: AutomationActionCommand.ENABLE_DEVICE,
       target: externalLightGroup,
       manual: false,
     };
     takeActions([action])
-      .then(() => { store.dispatch(lightSet('3', true)); })
+      .then(() => { store.dispatch(lightSet(externalLightGroup, true)); })
       .catch(() => { error('[external-light] Unable to enable external light'); });
   });
 };

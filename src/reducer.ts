@@ -1,4 +1,7 @@
+import fromPairs = require('lodash/fromPairs');
+
 import { Action } from './actions';
+import { automaticLights } from './devices';
 import { AutomationAction, AutomationActionCommand } from './remote';
 
 export interface State {
@@ -41,18 +44,20 @@ const reducer = (state = initialState, action: Action): State => {
         state.peoplePresent.length > 0 &&
         value < MINIMUM_LIGHT_LEVEL &&
         // Only set the light automatically if I'm home and it's not after 21
-        timestamp.getHours() < 21 && timestamp.getHours() > 9
+        timestamp.getHours() < 21 &&
+        timestamp.getHours() > 9
       ) {
         actionsToTake = [
           ...actionsToTake,
-          { command: AutomationActionCommand.ENABLE_LIGHT, target: '1' },
-          { command: AutomationActionCommand.ENABLE_LIGHT, target: '2' },
+          ...automaticLights.map(target => ({
+            command: AutomationActionCommand.ENABLE_DEVICE,
+            target,
+          })),
         ];
         lightSetAutomatically = true;
         lastAutomaticLightState = {
           ...lastAutomaticLightState,
-          1: true,
-          2: true,
+          ...fromPairs(automaticLights.map(target => [target, true])),
         };
       }
 
@@ -64,11 +69,25 @@ const reducer = (state = initialState, action: Action): State => {
         lightLevel: value,
       };
     case 'LIGHT_SET':
+      let individualLights;
+      switch (action.lightId) {
+        case 'dining':
+          individualLights = ['table', 'kitchen'];
+          break;
+        case 'living':
+          individualLights = ['sofa', 'tv', 'window'];
+          break;
+        case 'lights':
+          individualLights = ['table', 'kitchen', 'sofa', 'tv', 'window'];
+          break;
+        default:
+          individualLights = [action.lightId];
+      }
       return {
         ...state,
         lastAutomaticLightState: {
           ...lastAutomaticLightState,
-          [action.lightId]: action.enabled,
+          ...fromPairs(individualLights.map(light => [light, action.enabled])),
         },
       };
     case 'SET_TEMPERATURE':
@@ -95,14 +114,15 @@ const reducer = (state = initialState, action: Action): State => {
         ) {
           actionsToTake = [
             ...actionsToTake,
-            { command: AutomationActionCommand.ENABLE_LIGHT, target: '1' },
-            { command: AutomationActionCommand.ENABLE_LIGHT, target: '2' },
+            ...automaticLights.map(target => ({
+              command: AutomationActionCommand.ENABLE_DEVICE,
+              target,
+            })),
           ];
           lightSetAutomatically = true;
           lastAutomaticLightState = {
             ...lastAutomaticLightState,
-            1: true,
-            2: true,
+            ...fromPairs(automaticLights.map(target => [target, true])),
           };
         }
 
@@ -118,20 +138,23 @@ const reducer = (state = initialState, action: Action): State => {
       return state;
     case 'REMOVE_PERSON_PRESENT':
       if (state.peoplePresent.find(person => person === action.person)) {
-        const peoplePresent = state.peoplePresent.filter(person => person !== action.person);
+        const peoplePresent = state.peoplePresent.filter(
+          person => person !== action.person,
+        );
         if (peoplePresent.length === 0) {
           actionsToTake = [
             ...actionsToTake,
-            { command: AutomationActionCommand.DISABLE_LIGHT, target: '1' },
-            { command: AutomationActionCommand.DISABLE_LIGHT, target: '2' },
+            ...automaticLights.map(target => ({
+              command: AutomationActionCommand.DISABLE_DEVICE,
+              target,
+            })),
           ];
 
           // We reset the automatic light switching when the last person leaves the house
           lightSetAutomatically = false;
           lastAutomaticLightState = {
             ...lastAutomaticLightState,
-            1: false,
-            2: false,
+            ...fromPairs(automaticLights.map(target => [target, false])),
           };
         }
         return {

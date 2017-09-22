@@ -1,9 +1,10 @@
+import { Device } from './devices';
 import { error, log } from './log';
 import { storeAction } from './permanent-store';
 
 const TelldusAPI = require('telldus-live');
 
-interface Device {
+interface TelldusDevice {
   id: string;
   clientDeviceId: string;
   name: string;
@@ -24,49 +25,41 @@ const publicKey = process.env.TELLDUS_PUBLIC_KEY;
 const privateKey = process.env.TELLDUS_PRIVATE_KEY;
 const token = process.env.TELLDUS_TOKEN;
 const tokenSecret = process.env.TELLDUS_TOKEN_SECRET;
-let devices: Device[];
-let speaker: Device | undefined;
-let livingRoom: Device | undefined;
-let diningRoom: Device | undefined;
-let allLights: Device | undefined;
+let devices: TelldusDevice[];
 
 const cloud = new TelldusAPI.TelldusAPI({ publicKey, privateKey })
   .login(token, tokenSecret, (err: any, _user: any) => {
     if (!!err) {
-      return error('login error: ' + err.message);
+      return error('login error: ' + err);
     }
 
     log('[telldus] Logged in to Telldus successfully');
   })
   .on('error', (err: any) => {
-    error('background error: ' + err.message);
+    error('background error: ' + err);
   });
 
 cloud.getDevices((err: any, devicesResponse: any) => {
   if (!!err) {
-    return error('getDevices error: ' + err.message);
+    return error('getDevices error: ' + err);
   }
 
   devices = devicesResponse;
-  speaker = devices.find(d => d.name === 'Speakers');
-  livingRoom = devices.find(d => d.name === 'Living room');
-  diningRoom = devices.find(d => d.name === 'Dining room');
-  allLights = devices.find(d => d.name === 'Lights');
 });
 
 export enum AutomationActionCommand {
-  DISABLE_LIGHT,
-  ENABLE_LIGHT,
+  DISABLE_DEVICE,
+  ENABLE_DEVICE,
 }
 
 export interface AutomationAction {
   command: AutomationActionCommand;
-  target: string;
+  target: Device;
   manual?: boolean;
 }
 
 // Takes the desired actions and stores them to the permanent storage
-export const takeActions = (actions: AutomationAction[]) => {
+export function takeActions(actions: AutomationAction[]) {
   if (!devices) {
     error('[telldus] No device information available');
     return Promise.reject('Unabled to connect to Telldus');
@@ -76,25 +69,40 @@ export const takeActions = (actions: AutomationAction[]) => {
     actions.map(action => new Promise(
       (resolve, reject) => handleAction(action, resolve, reject),
     )));
-};
+}
+
+function findDevice(name: string) {
+  return devices && devices.find(d => d.name.toLowerCase().indexOf(name) > -1);
+}
 
 function handleAction(
   action: AutomationAction,
   resolve: (value?: any | PromiseLike<any>) => void,
   reject: (reason?: any) => void,
 ) {
-  let targetDevice: Device | undefined;
+  let targetDevice: TelldusDevice | undefined;
   log(`[action] Handling action ${action.command} on ${action.target}`);
+  if (!devices) {
+    error('[telldus] No devices found');
+    return reject('No device targets');
+  }
 
   switch (action.target) {
-    case '2':
-      targetDevice = livingRoom;
+    case 'sofa':
+    case 'speakers':
+    case 'tv':
+    case 'window':
+    case 'outside':
+    case 'kitchen':
+    case 'table':
+    case 'bedroom':
+    case 'dining':
+    case 'living':
+    case 'bedroom':
+      targetDevice = findDevice(action.target);
       break;
-    case '3':
-      targetDevice = speaker;
-      break;
-    case '1':
-      targetDevice = diningRoom;
+    case 'lights':
+      targetDevice = findDevice('all lights');
       break;
   }
 
@@ -105,10 +113,10 @@ function handleAction(
 
   cloud.onOffDevice(
     targetDevice,
-    action.command === AutomationActionCommand.ENABLE_LIGHT,
+    action.command === AutomationActionCommand.ENABLE_DEVICE,
     (err: any, _result: any) => {
       if (!!err) {
-        error('[telldus] onOffDevice error: ' + err.message);
+        error('[telldus] onOffDevice error: ' + err);
         reject('Unable to send on/off command');
       }
 

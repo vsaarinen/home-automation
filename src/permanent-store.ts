@@ -114,10 +114,10 @@ export const storeAction = (action: AutomationAction) => {
   const manual = !!action.manual;
 
   switch (action.command) {
-    case AutomationActionCommand.ENABLE_LIGHT:
-    case AutomationActionCommand.DISABLE_LIGHT:
+    case AutomationActionCommand.ENABLE_DEVICE:
+    case AutomationActionCommand.DISABLE_DEVICE:
       const group = action.target;
-      const enabled = action.command === AutomationActionCommand.ENABLE_LIGHT;
+      const enabled = action.command === AutomationActionCommand.ENABLE_DEVICE;
 
       return influx.writeMeasurement('switchedLight', [
         {
