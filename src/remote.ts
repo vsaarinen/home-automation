@@ -44,8 +44,8 @@ cloud.getDevices((err: any, devicesResponse: any) => {
     return error('getDevices error: ' + err);
   }
 
-  log('[telldus] Found devices:', devices.map(d => d.name));
   devices = devicesResponse;
+  log('[telldus] Found devices:', devices.map(d => d.name));
 });
 
 export enum AutomationActionCommand {
