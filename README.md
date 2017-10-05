@@ -4,8 +4,8 @@ This server stores sensor measurements and controls lights (and other devices) b
 It also allows for remote control of lights via an HTTP request. Data is stored in InfluxDB.
 
 Lights are connected to [cheap radio-controlled plugs](http://www.clasohlson.com/fi/Kaukokytkinsarja-3-kpl-Nexa-PE-3/36-4602) that are controlled
-by a TellStick Net. A [Homebridge](https://github.com/nfarina/homebridge) server is set up on a Raspberry Pi with a
-[custom plugin](https://github.com/vsaarinen/homebridge-lights) to be able to control and query lights via HomeKit and Siri.
+by a TellStick Net. A Raspberry Pi is set up with a [Homebridge](https://github.com/nfarina/homebridge) server +
+[custom plugin](https://github.com/vsaarinen/homebridge-lights) and [Snips](https://snips.ai/) to be able to control and query lights via voice commands, HomeKit and Siri.
 
 Light, temperature, humidity and pressure data comes from [sensors](sensors/) on an [Electric Imp](https://www.sparkfun.com/products/11395).
 Data about whether someone is home comes from [Locative](https://www.locative.io/).
