@@ -34,7 +34,7 @@ interface SunCalc {
 }
 const suncalc: SunCalc = require('suncalc');
 
-if (!process.env.LATITUDE || process.env.LONGTITUDE) {
+if (!process.env.LATITUDE || !process.env.LONGTITUDE) {
   throw new Error(
     'LATITUDE and LONGTITUDE environment variables need to be defined',
   );
