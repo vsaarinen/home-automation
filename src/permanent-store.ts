@@ -84,10 +84,8 @@ const storeMeasurementData = (
     ])
     .then(() => {
       log(
-        `[influxdb] Stored data to InfluxDB: [${valueType}] ${value} @ ${tags[
-          'location'
-        ]}`,
-      ); // tslint:disable-line
+        `[influxdb] Stored data to InfluxDB: [${valueType}] ${value} @ ${tags.location}`,
+      );
     })
     .catch(err => {
       error(`[influxdb] Error saving data to InfluxDB! ${err.stack}`);
