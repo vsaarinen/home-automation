@@ -4,7 +4,7 @@ import * as Path from 'path';
 import { log } from './log';
 import { initializeRoutes } from './routes';
 import store from './store';
-import { initializeTimeBasedActions } from './time';
+// import { initializeTimeBasedActions } from './time';
 
 // SET UP SERVER
 const server = new Hapi.Server({
@@ -23,7 +23,7 @@ server.connection({
 });
 
 initializeRoutes(server, store);
-initializeTimeBasedActions(store);
+// initializeTimeBasedActions(store);
 
 // START SERVER
 server.start(err => {
