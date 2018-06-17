@@ -28,7 +28,7 @@ const initialState: State = {
   lastAutomaticLightState: {},
 };
 
-const MINIMUM_LIGHT_LEVEL = 120;
+const MINIMUM_LIGHT_LEVEL = 50;
 
 // TODO: Handle the case when the light has been enabled manually
 
