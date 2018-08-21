@@ -28,7 +28,7 @@ const initialState: State = {
   lastAutomaticLightState: {},
 };
 
-const MINIMUM_LIGHT_LEVEL = 55;
+const MINIMUM_LIGHT_LEVEL = 150;
 
 // TODO: Handle the case when the light has been enabled manually
 
@@ -43,8 +43,8 @@ const reducer = (state = initialState, action: Action): State => {
         !lightSetAutomatically &&
         state.peoplePresent.length > 0 &&
         value < MINIMUM_LIGHT_LEVEL &&
-        // Only set the light automatically if I'm home and it's not after 21
-        timestamp.getHours() < 21 &&
+        // Only set the light automatically if I'm home and it's not after 22
+        timestamp.getHours() < 22 &&
         timestamp.getHours() > 9
       ) {
         actionsToTake = [
