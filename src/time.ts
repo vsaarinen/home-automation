@@ -41,8 +41,8 @@ if (!process.env.LATITUDE || !process.env.LONGTITUDE) {
 }
 
 const currentLocation = {
-  latitude: parseFloat(process.env.LATITUDE),
-  longtitude: parseFloat(process.env.LONGTITUDE),
+  latitude: parseFloat(process.env.LATITUDE!),
+  longtitude: parseFloat(process.env.LONGTITUDE!),
 };
 
 const now = () => new Date();
