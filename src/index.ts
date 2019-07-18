@@ -1,5 +1,5 @@
 import * as Hapi from 'hapi';
-import * as Path from 'path';
+import * as path from 'path';
 
 import { log } from './log';
 import { initializeRoutes } from './routes';
@@ -11,7 +11,7 @@ const server = new Hapi.Server({
   connections: {
     routes: {
       files: {
-        relativeTo: Path.join(__dirname, '..', 'public'),
+        relativeTo: path.join(__dirname, '..', 'public'),
       },
     },
   },

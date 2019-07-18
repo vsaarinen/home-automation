@@ -106,11 +106,11 @@ function enableBedroomLightControl(store: Store<any>) {
   const nightLight: Device = 'bedroom';
 
   const sleepTimeS = minuteS.filter(
-    d => d.getHours() === 20 && d.getMinutes() === 30,
+    d => d.getHours() === 21 && d.getMinutes() === 0,
   );
 
   const wakeupTimeS = minuteS.filter(
-    d => d.getHours() === 7 && d.getMinutes() === 0,
+    d => d.getHours() === 8 && d.getMinutes() === 0,
   );
 
   // Automatically turn off outer lights
