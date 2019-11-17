@@ -8,99 +8,114 @@ import { Device } from './devices';
 import { error } from './log';
 import { AutomationActionCommand, takeActions } from './remote';
 
-// interface SunCalcObject {
-//   sunrise: Date;
-//   sunriseEnd: Date;
-//   goldenHourEnd: Date;
-//   solarNoon: Date;
-//   goldenHour: Date;
-//   sunsetStart: Date;
-//   sunset: Date;
-//   dusk: Date;
-//   nauticalDusk: Date;
-//   night: Date;
-//   nadir: Date;
-//   nightEnd: Date;
-//   nauticalDawn: Date;
-//   dawn: Date;
-// }
+interface SunCalcObject {
+  sunrise: Date;
+  sunriseEnd: Date;
+  goldenHourEnd: Date;
+  solarNoon: Date;
+  goldenHour: Date;
+  sunsetStart: Date;
+  sunset: Date;
+  dusk: Date;
+  nauticalDusk: Date;
+  night: Date;
+  nadir: Date;
+  nightEnd: Date;
+  nauticalDawn: Date;
+  dawn: Date;
+}
 
-// interface SunCalc {
-//   getTimes(date: Date, latitude: number, longtitude: number): SunCalcObject;
-// }
-// const suncalc: SunCalc = require('suncalc');
+interface SunCalc {
+  getTimes(date: Date, latitude: number, longtitude: number): SunCalcObject;
+}
+const suncalc: SunCalc = require('suncalc');
 
-// if (!process.env.LATITUDE || !process.env.LONGTITUDE) {
-//   throw new Error(
-//     'LATITUDE and LONGTITUDE environment variables need to be defined',
-//   );
-// }
+const ENABLE_OUTSIDE_LIGHT = true;
 
-// const currentLocation = {
-//   latitude: parseFloat(process.env.LATITUDE!),
-//   longtitude: parseFloat(process.env.LONGTITUDE!),
-// };
+if (
+  ENABLE_OUTSIDE_LIGHT &&
+  (!process.env.LATITUDE || !process.env.LONGTITUDE)
+) {
+  throw new Error(
+    'LATITUDE and LONGTITUDE environment variables need to be defined',
+  );
+}
+
+const currentLocation = {
+  latitude: parseFloat(process.env.LATITUDE!),
+  longtitude: parseFloat(process.env.LONGTITUDE!),
+};
 
 const now = () => new Date();
-
-// const calculateSunInfo = (date: Date): SunCalcObject =>
-//   suncalc.getTimes(date, currentLocation.latitude, currentLocation.longtitude);
-
-// let todaySunInfo = calculateSunInfo(now());
-
 const minuteS = periodic(1000 * 60).map(now);
-// const hourS = minuteS.filter(d => d.getMinutes() === 0);
-// const dayS = hourS.filter(d => d.getHours() === 0);
+const hourS = minuteS.filter(d => d.getMinutes() === 0);
+const dayS = hourS.filter(d => d.getHours() === 0);
 
-// dayS.forEach(d => {
-//   todaySunInfo = calculateSunInfo(d);
-// });
+function calculateSunInfo(date: Date): SunCalcObject {
+  return suncalc.getTimes(
+    date,
+    currentLocation.latitude,
+    currentLocation.longtitude,
+  );
+}
 
-// function enableExternalLightControl(store: Store<any>) {
-//   const externalLightGroup: Device = 'outside';
+let todaySunInfo = calculateSunInfo(now());
 
-//   const sunriseS = minuteS.filter(
-//     d =>
-//       d.getHours() === todaySunInfo.sunrise.getHours() &&
-//       d.getMinutes() === todaySunInfo.sunrise.getMinutes(),
-//   );
+if (ENABLE_OUTSIDE_LIGHT) {
+  dayS.forEach(d => {
+    todaySunInfo = calculateSunInfo(d);
+  });
+}
 
-//   const sunsetS = minuteS.filter(
-//     d =>
-//       d.getHours() === todaySunInfo.sunset.getHours() &&
-//       d.getMinutes() === todaySunInfo.sunset.getMinutes(),
-//   );
+function enableExternalLightControl(store: Store<any>) {
+  const externalLightGroup: Device = 'outside';
 
-//   // Automatically turn off outer lights
-//   sunriseS.forEach(() => {
-//     takeActions([{
-//       command: AutomationActionCommand.DISABLE_DEVICE,
-//       target: externalLightGroup,
-//       manual: false,
-//     }])
-//       .then(() => {
-//         store.dispatch(lightSet(externalLightGroup, false));
-//       })
-//       .catch(() => {
-//         error('[external-light] Unable to disable external light');
-//       });
-//   });
+  const sunriseS = minuteS.filter(
+    d =>
+      d.getHours() === todaySunInfo.sunrise.getHours() &&
+      d.getMinutes() === todaySunInfo.sunrise.getMinutes(),
+  );
 
-//   // Automatically turn on outer lights
-//   sunsetS.forEach(() => {
-//     takeActions([{
-//       command: AutomationActionCommand.ENABLE_DEVICE,
-//       target: externalLightGroup,
-//       manual: false,
-//     }])
-//       .then(() => {
-//         store.dispatch(lightSet(externalLightGroup, true));
-//       })
-//       .catch(() => {
-//         error('[external-light] Unable to enable external light');
-//       });
-//   });
-// }
+  const sunsetS = minuteS.filter(
+    d =>
+      d.getHours() === todaySunInfo.sunset.getHours() &&
+      d.getMinutes() === todaySunInfo.sunset.getMinutes(),
+  );
+
+  // Automatically turn off outer lights
+  sunriseS.forEach(() => {
+    takeActions([
+      {
+        command: AutomationActionCommand.DISABLE_DEVICE,
+        target: externalLightGroup,
+        manual: false,
+      },
+    ])
+      .then(() => {
+        store.dispatch(lightSet(externalLightGroup, false));
+      })
+      .catch(() => {
+        error('[external-light] Unable to disable external light');
+      });
+  });
+
+  // Automatically turn on outer lights
+  sunsetS.forEach(() => {
+    takeActions([
+      {
+        command: AutomationActionCommand.ENABLE_DEVICE,
+        target: externalLightGroup,
+        manual: false,
+      },
+    ])
+      .then(() => {
+        store.dispatch(lightSet(externalLightGroup, true));
+      })
+      .catch(() => {
+        error('[external-light] Unable to enable external light');
+      });
+  });
+}
 
 function enableBedroomLightControl(store: Store<any>) {
   const nightLight: Device = 'bedroom';
@@ -153,6 +168,8 @@ function enableBedroomLightControl(store: Store<any>) {
 }
 
 export const initializeTimeBasedActions = (store: Store<any>) => {
-  // enableExternalLightControl(store);
+  if (ENABLE_OUTSIDE_LIGHT) {
+    enableExternalLightControl(store);
+  }
   enableBedroomLightControl(store);
 };
