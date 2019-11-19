@@ -101,7 +101,6 @@ function handleAction(
     case 'bedroom':
     case 'dining':
     case 'living':
-    case 'bedroom':
       targetDevice = findDevice(action.target);
       break;
     case 'lights':
@@ -119,11 +118,11 @@ function handleAction(
     action.command === AutomationActionCommand.ENABLE_DEVICE,
     (err: any, _result: any) => {
       if (!!err) {
-        error('[telldus] onOffDevice error: ' + err.message);
+        error('[telldus] onOffDevice error: ' + JSON.stringify(err));
         reject('Unable to send on/off command');
       }
 
-      return storeAction(action).then(() => resolve());
+      return storeAction(action).then(resolve);
     },
   );
 }
