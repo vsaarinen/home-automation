@@ -9,6 +9,7 @@ export type Device =
   | 'speakers'
   | 'outside'
   | 'dining'
+  | 'corner'
   | 'living';
 
 export const automaticLights: Device[] = [
@@ -17,4 +18,5 @@ export const automaticLights: Device[] = [
   'window',
   'tv',
   'kitchen',
+  'corner',
 ];

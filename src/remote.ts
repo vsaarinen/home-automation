@@ -45,7 +45,10 @@ cloud.getDevices((err: any, devicesResponse: any) => {
   }
 
   devices = devicesResponse;
-  log('[telldus] Found devices:', devices.map(d => d.name));
+  log(
+    '[telldus] Found devices:',
+    devices.map(d => d.name),
+  );
 });
 
 export enum AutomationActionCommand {
@@ -95,6 +98,7 @@ function handleAction(
     case 'speakers':
     case 'tv':
     case 'window':
+    case 'corner':
     case 'outside':
     case 'kitchen':
     case 'table':

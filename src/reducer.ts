@@ -1,7 +1,7 @@
 import fromPairs = require('lodash/fromPairs');
 
 import { Action } from './actions';
-import { automaticLights } from './devices';
+import { automaticLights, Device } from './devices';
 import { AutomationAction, AutomationActionCommand } from './remote';
 
 export interface State {
@@ -16,6 +16,9 @@ export interface State {
     [id: string]: boolean;
   };
 }
+
+const DINING_ROOM_LIGHTS: Device[] = ['table', 'kitchen', 'corner'];
+const LIVING_ROOM_LIGHTS: Device[] = ['sofa', 'tv', 'window'];
 
 const initialState: State = {
   peoplePresent: [],
@@ -72,13 +75,13 @@ const reducer = (state = initialState, action: Action): State => {
       let individualLights;
       switch (action.lightId) {
         case 'dining':
-          individualLights = ['table', 'kitchen'];
+          individualLights = DINING_ROOM_LIGHTS;
           break;
         case 'living':
-          individualLights = ['sofa', 'tv', 'window'];
+          individualLights = LIVING_ROOM_LIGHTS;
           break;
         case 'lights':
-          individualLights = ['table', 'kitchen', 'sofa', 'tv', 'window'];
+          individualLights = DINING_ROOM_LIGHTS.concat(LIVING_ROOM_LIGHTS);
           break;
         default:
           individualLights = [action.lightId];
