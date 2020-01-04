@@ -117,8 +117,8 @@ function enableExternalLightControl(store: Store<any>) {
   });
 }
 
-function enableBedroomLightControl(store: Store<any>) {
-  const nightLight: Device = 'bedroom';
+function enableNightLightControl(store: Store<any>) {
+  const nightLight: Device = 'night';
 
   const sleepTimeS = minuteS.filter(
     d => d.getMinutes() === 30 && d.getHours() === 20,
@@ -145,7 +145,7 @@ function enableBedroomLightControl(store: Store<any>) {
         store.dispatch(lightSet(nightLight, false));
       })
       .catch(() => {
-        error('[bedroom-light] Unable to disable bedroom light');
+        error('[night-light] Unable to disable night light');
       });
   });
 
@@ -162,7 +162,7 @@ function enableBedroomLightControl(store: Store<any>) {
         store.dispatch(lightSet(nightLight, true));
       })
       .catch(() => {
-        error('[bedroom-light] Unable to enable bedroom light');
+        error('[night-light] Unable to enable night light');
       });
   });
 }
@@ -171,5 +171,5 @@ export const initializeTimeBasedActions = (store: Store<any>) => {
   if (ENABLE_OUTSIDE_LIGHT) {
     enableExternalLightControl(store);
   }
-  enableBedroomLightControl(store);
+  enableNightLightControl(store);
 };

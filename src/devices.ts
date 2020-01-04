@@ -5,7 +5,7 @@ export type Device =
   | 'tv'
   | 'kitchen'
   | 'lights'
-  | 'bedroom'
+  | 'night'
   | 'speakers'
   | 'outside'
   | 'dining'

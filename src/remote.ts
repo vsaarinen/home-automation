@@ -102,7 +102,7 @@ function handleAction(
     case 'outside':
     case 'kitchen':
     case 'table':
-    case 'bedroom':
+    case 'night':
     case 'dining':
     case 'living':
       targetDevice = findDevice(action.target);
