@@ -47,7 +47,7 @@ cloud.getDevices((err: any, devicesResponse: any) => {
   devices = devicesResponse;
   log(
     '[telldus] Found devices:',
-    devices.map(d => d.name),
+    devices.map((d) => d.name),
   );
 });
 
@@ -71,14 +71,16 @@ export function takeActions(actions: AutomationAction[]) {
 
   return Promise.all(
     actions.map(
-      action =>
+      (action) =>
         new Promise((resolve, reject) => handleAction(action, resolve, reject)),
     ),
   );
 }
 
 function findDevice(name: string) {
-  return devices && devices.find(d => d.name.toLowerCase().indexOf(name) > -1);
+  return (
+    devices && devices.find((d) => d.name.toLowerCase().indexOf(name) > -1)
+  );
 }
 
 function handleAction(
@@ -108,7 +110,7 @@ function handleAction(
       targetDevice = findDevice(action.target);
       break;
     case 'lights':
-      targetDevice = devices.find(d => d.name.toLowerCase() === 'lights');
+      targetDevice = devices.find((d) => d.name.toLowerCase() === 'lights');
       break;
   }
 

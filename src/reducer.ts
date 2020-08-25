@@ -52,7 +52,7 @@ const reducer = (state = initialState, action: Action): State => {
       ) {
         actionsToTake = [
           ...actionsToTake,
-          ...automaticLights.map(target => ({
+          ...automaticLights.map((target) => ({
             command: AutomationActionCommand.ENABLE_DEVICE,
             target,
           })),
@@ -60,7 +60,7 @@ const reducer = (state = initialState, action: Action): State => {
         lightSetAutomatically = true;
         lastAutomaticLightState = {
           ...lastAutomaticLightState,
-          ...fromPairs(automaticLights.map(target => [target, true])),
+          ...fromPairs(automaticLights.map((target) => [target, true])),
         };
       }
 
@@ -90,7 +90,9 @@ const reducer = (state = initialState, action: Action): State => {
         ...state,
         lastAutomaticLightState: {
           ...lastAutomaticLightState,
-          ...fromPairs(individualLights.map(light => [light, action.enabled])),
+          ...fromPairs(
+            individualLights.map((light) => [light, action.enabled]),
+          ),
         },
       };
     case 'SET_TEMPERATURE':
@@ -109,7 +111,7 @@ const reducer = (state = initialState, action: Action): State => {
         pressure: action.value,
       };
     case 'SET_PERSON_PRESENT':
-      if (!state.peoplePresent.find(person => person === action.person)) {
+      if (!state.peoplePresent.find((person) => person === action.person)) {
         if (
           !lightSetAutomatically &&
           state.peoplePresent.length === 0 &&
@@ -117,7 +119,7 @@ const reducer = (state = initialState, action: Action): State => {
         ) {
           actionsToTake = [
             ...actionsToTake,
-            ...automaticLights.map(target => ({
+            ...automaticLights.map((target) => ({
               command: AutomationActionCommand.ENABLE_DEVICE,
               target,
             })),
@@ -125,7 +127,7 @@ const reducer = (state = initialState, action: Action): State => {
           lightSetAutomatically = true;
           lastAutomaticLightState = {
             ...lastAutomaticLightState,
-            ...fromPairs(automaticLights.map(target => [target, true])),
+            ...fromPairs(automaticLights.map((target) => [target, true])),
           };
         }
 
@@ -140,14 +142,14 @@ const reducer = (state = initialState, action: Action): State => {
 
       return state;
     case 'REMOVE_PERSON_PRESENT':
-      if (state.peoplePresent.find(person => person === action.person)) {
+      if (state.peoplePresent.find((person) => person === action.person)) {
         const peoplePresent = state.peoplePresent.filter(
-          person => person !== action.person,
+          (person) => person !== action.person,
         );
         if (peoplePresent.length === 0) {
           actionsToTake = [
             ...actionsToTake,
-            ...automaticLights.map(target => ({
+            ...automaticLights.map((target) => ({
               command: AutomationActionCommand.DISABLE_DEVICE,
               target,
             })),
@@ -157,7 +159,7 @@ const reducer = (state = initialState, action: Action): State => {
           lightSetAutomatically = false;
           lastAutomaticLightState = {
             ...lastAutomaticLightState,
-            ...fromPairs(automaticLights.map(target => [target, false])),
+            ...fromPairs(automaticLights.map((target) => [target, false])),
           };
         }
         return {

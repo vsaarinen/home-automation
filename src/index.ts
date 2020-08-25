@@ -26,7 +26,7 @@ initializeRoutes(server, store);
 initializeTimeBasedActions(store);
 
 // START SERVER
-server.start(err => {
+server.start((err) => {
   if (err) {
     throw err;
   }

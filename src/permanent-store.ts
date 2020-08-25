@@ -56,7 +56,7 @@ const influx = new InfluxDB({
 
 influx
   .getDatabaseNames()
-  .then(names => {
+  .then((names) => {
     if (names.indexOf(DB_NAME) === -1) {
       return influx.createDatabase(DB_NAME);
     }
@@ -66,7 +66,7 @@ influx
   .then(() => {
     log('[influxdb] Connected to InfluxDB');
   })
-  .catch(err => {
+  .catch((err) => {
     error('[influxdb] Error creating Influx database!', err);
   });
 
@@ -87,7 +87,7 @@ const storeMeasurementData = (
         `[influxdb] Stored data to InfluxDB: [${valueType}] ${value} @ ${tags.location}`,
       );
     })
-    .catch(err => {
+    .catch((err) => {
       error(`[influxdb] Error saving data to InfluxDB! ${err.stack}`);
       throw new Error('Error saving data to InfluxDB!');
     });
@@ -130,7 +130,7 @@ export const storeAction = (action: AutomationAction) => {
             `[influxdb] Stored data to InfluxDB: [switchedLight] ${enabled}, group ${group}, manual ${manual}`,
           );
         })
-        .catch(err => {
+        .catch((err) => {
           error(
             `[influxdb] Error saving action data to InfluxDB! ${err.stack}`,
           );
@@ -154,7 +154,7 @@ export const storeLocationChange = (person: string, isHome: boolean) =>
         `[influxdb] Stored data to InfluxDB: [personLocation] ${person}, isHome ${isHome}`,
       );
     })
-    .catch(err => {
+    .catch((err) => {
       error(`[influxdb] Error saving location data to InfluxDB! ${err.stack}`);
       throw new Error('Error saving location data to InfluxDB!');
     });

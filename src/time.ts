@@ -48,8 +48,8 @@ const currentLocation = {
 
 const now = () => new Date();
 const minuteS = periodic(1000 * 60).map(now);
-const hourS = minuteS.filter(d => d.getMinutes() === 0);
-const dayS = hourS.filter(d => d.getHours() === 0);
+const hourS = minuteS.filter((d) => d.getMinutes() === 0);
+const dayS = hourS.filter((d) => d.getHours() === 0);
 
 function calculateSunInfo(date: Date): SunCalcObject {
   return suncalc.getTimes(
@@ -62,7 +62,7 @@ function calculateSunInfo(date: Date): SunCalcObject {
 let todaySunInfo = calculateSunInfo(now());
 
 if (ENABLE_OUTSIDE_LIGHT) {
-  dayS.forEach(d => {
+  dayS.forEach((d) => {
     todaySunInfo = calculateSunInfo(d);
   });
 }
@@ -71,13 +71,13 @@ function enableExternalLightControl(store: Store<any>) {
   const externalLightGroup: Device = 'outside';
 
   const sunriseS = minuteS.filter(
-    d =>
+    (d) =>
       d.getHours() === todaySunInfo.sunrise.getHours() &&
       d.getMinutes() === todaySunInfo.sunrise.getMinutes(),
   );
 
   const sunsetS = minuteS.filter(
-    d =>
+    (d) =>
       d.getHours() === todaySunInfo.sunset.getHours() &&
       d.getMinutes() === todaySunInfo.sunset.getMinutes(),
   );
@@ -125,7 +125,7 @@ function enableNightLightControl(store: Store<any>) {
   );
 
   const wakeupTimeS = minuteS.filter(
-    d =>
+    (d) =>
       d.getMinutes() === 0 &&
       ([0, 6].indexOf(d.getDay()) > -1
         ? d.getHours() === 8
