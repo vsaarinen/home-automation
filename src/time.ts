@@ -121,7 +121,7 @@ function enableNightLightControl(store: Store<any>) {
   const nightLight: Device = 'night';
 
   const sleepTimeS = minuteS.filter(
-    d => d.getMinutes() === 30 && d.getHours() === 20,
+    (d) => d.getMinutes() === 0 && d.getHours() === 20,
   );
 
   const wakeupTimeS = minuteS.filter(
